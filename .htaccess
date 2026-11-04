@@ -1,0 +1,16 @@
+# Fallback for hosts where the document root cannot point at /public.
+# Routes every request into public/ and blocks direct access to application files.
+# Preferred setup: point the (sub)domain document root at the public/ directory.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(app|config|database|storage|vendor|cron|bin|tests|plugins|docs|\.git|\.github)(/|$) - [F,L]
+    RewriteRule ^\.env - [F,L]
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^(\.env.*|composer\.(json|lock)|VERSION|.*\.md|\.cpanel\.yml|phpunit\.xml.*)$">
+    Require all denied
+</FilesMatch>
