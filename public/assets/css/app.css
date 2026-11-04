@@ -68,6 +68,11 @@ table.compact td,table.compact th{padding:9px 10px}
 .help{display:block;font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
 .check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
 .check input{width:auto;margin:0}
+.inline-edit{position:relative}
+.inline-edit summary{list-style:none;cursor:pointer}
+.inline-edit summary::-webkit-details-marker{display:none}
+.inline-edit-form{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:var(--card,#fff);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 30px rgba(15,23,42,.14);padding:12px;display:grid;gap:8px;min-width:220px}
+.inline-edit-form label{font-size:11px;color:var(--muted);display:grid;gap:4px}
 .form-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
 input:focus,select:focus,textarea:focus{border-color:#8fb0f3;outline:none;box-shadow:0 0 0 3px #2563eb1a}
 fieldset{border:1px solid var(--line);border-radius:10px;padding:14px;margin:0 0 14px}
