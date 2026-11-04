@@ -65,6 +65,19 @@ return function (Router $r): void {
         $r->post('/hosting/{id}/cancel', [Admin\ServiceController::class, 'cancel']);
         $r->post('/hosting/{id}/terminate', [Admin\ServiceController::class, 'terminate'], ['super']);
 
+        $r->get('/domains', [Admin\DomainController::class, 'index']);
+        $r->get('/domains/create', [Admin\DomainController::class, 'create']);
+        $r->post('/domains', [Admin\DomainController::class, 'store']);
+        $r->get('/domains/view/{id}', [Admin\DomainController::class, 'show']);
+        $r->post('/domains/update/{id}', [Admin\DomainController::class, 'update']);
+        $r->post('/domains/{id}/register', [Admin\DomainController::class, 'register']);
+        $r->post('/domains/{id}/renew', [Admin\DomainController::class, 'renew']);
+        $r->post('/domains/{id}/status', [Admin\DomainController::class, 'setStatus']);
+        $r->get('/domains/pricing', [Admin\DomainController::class, 'pricing']);
+        $r->post('/domains/pricing', [Admin\DomainController::class, 'pricingStore'], ['super']);
+        $r->post('/domains/pricing/{id}/update', [Admin\DomainController::class, 'pricingUpdate'], ['super']);
+        $r->post('/domains/pricing/{id}/delete', [Admin\DomainController::class, 'pricingDelete'], ['super']);
+
         $r->get('/hosting/plans', [Admin\PlanController::class, 'index']);
         $r->get('/hosting/plans/create', [Admin\PlanController::class, 'create'], ['super']);
         $r->post('/hosting/plans', [Admin\PlanController::class, 'store'], ['super']);
@@ -141,6 +154,11 @@ return function (Router $r): void {
         $r->post('/services/{id}/renew', [Client\ServiceController::class, 'renew']);
         $r->post('/services/{id}/change-plan', [Client\ServiceController::class, 'changePlan']);
         $r->post('/services/{id}/login', [Client\ServiceController::class, 'login']);
+        $r->get('/domains', [Client\DomainController::class, 'index']);
+        $r->get('/domains/order', [Client\DomainController::class, 'order']);
+        $r->post('/domains/order', [Client\DomainController::class, 'store']);
+        $r->get('/domains/{id}', [Client\DomainController::class, 'show']);
+        $r->post('/domains/{id}/renew', [Client\DomainController::class, 'renew']);
         $r->get('/order', [Client\OrderController::class, 'index']);
         $r->post('/order', [Client\OrderController::class, 'store']);
         $r->get('/invoices', [Client\InvoiceController::class, 'index']);

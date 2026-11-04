@@ -45,6 +45,9 @@ final class Settings
         'termination_flag_days' => '30',
         'sync_interval_minutes' => '60',
         'provision_max_attempts' => '5',
+        // Domains
+        'domain_orders_enabled' => '1',
+        'domain_reminder_days' => '30,14,7,1',
         // Email / SMTP
         'mail_enabled' => '0',
         'smtp_host' => '',

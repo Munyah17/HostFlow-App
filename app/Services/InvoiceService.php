@@ -49,6 +49,7 @@ final class InvoiceService
                 $db->insert('invoice_items', [
                     'invoice_id' => $invoiceId,
                     'service_id' => $item['service_id'] ?? null,
+                    'domain_id' => $item['domain_id'] ?? null,
                     'item_type' => $item['item_type'] ?? 'custom',
                     'description' => mb_substr((string) $item['description'], 0, 255),
                     'quantity' => $qty,
@@ -87,7 +88,7 @@ final class InvoiceService
 
     public static function items(int $invoiceId): array
     {
-        return db()->fetchAll('SELECT ii.*, s.domain FROM invoice_items ii LEFT JOIN services s ON s.id = ii.service_id WHERE ii.invoice_id = ? ORDER BY ii.id', [$invoiceId]);
+        return db()->fetchAll('SELECT ii.*, s.domain, d.domain AS domain_name FROM invoice_items ii LEFT JOIN services s ON s.id = ii.service_id LEFT JOIN domains d ON d.id = ii.domain_id WHERE ii.invoice_id = ? ORDER BY ii.id', [$invoiceId]);
     }
 
     public static function balance(array $invoice): float
@@ -148,6 +149,9 @@ final class InvoiceService
             ], 'id = :id', ['id' => $invoiceId]);
             foreach ($db->fetchAll("SELECT service_id FROM invoice_items WHERE invoice_id = ? AND item_type = 'new_service' AND service_id IS NOT NULL", [$invoiceId]) as $row) {
                 $db->update('services', ['status' => 'cancelled', 'updated_at' => now()], "id = :id AND status = 'pending_payment'", ['id' => $row['service_id']]);
+            }
+            foreach ($db->fetchAll("SELECT domain_id FROM invoice_items WHERE invoice_id = ? AND item_type = 'domain' AND domain_id IS NOT NULL", [$invoiceId]) as $row) {
+                $db->update('domains', ['status' => 'cancelled', 'updated_at' => now()], "id = :id AND status = 'pending_payment'", ['id' => $row['domain_id']]);
             }
         });
     }

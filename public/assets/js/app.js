@@ -103,6 +103,15 @@
     el.addEventListener('change', function () { el.form && el.form.submit(); });
   });
 
+  // Checkbox reveals a hidden section: <input data-toggle="x"> + <div data-toggle-target="x">.
+  document.querySelectorAll('[data-toggle]').forEach(function (el) {
+    var target = document.querySelector('[data-toggle-target="' + el.dataset.toggle + '"]');
+    if (!target) return;
+    var apply = function () { target.hidden = !el.checked; };
+    el.addEventListener('change', apply);
+    apply();
+  });
+
   // Order form: update price when plan/cycle changes.
   document.querySelectorAll('[data-plan-select]').forEach(function (form) {
     var plan = form.querySelector('[name=plan_id]');

@@ -60,6 +60,10 @@ final class SettingsController extends Controller
             ['paynow_auth_email', 'Paynow account email (for reference)', 'email', 'email|max:190'],
             ['paynow_mobile_enabled', 'Offer mobile money (EcoCash etc.) on Paynow', 'checkbox', ''],
         ]],
+        'domains' => ['label' => 'Domains', 'fields' => [
+            ['domain_orders_enabled', 'Allow clients to order domains from the portal', 'checkbox', ''],
+            ['domain_reminder_days', 'Domain expiry reminder days before expiry (comma-separated)', 'text', 'regex:/^[\\d,\\s]*$/|max:60'],
+        ]],
         'portal' => ['label' => 'Client portal', 'fields' => [
             ['allow_registration', 'Allow customers to register themselves', 'checkbox', ''],
             ['min_password_length', 'Minimum password length', 'number', 'required|integer|min:8|max:64'],

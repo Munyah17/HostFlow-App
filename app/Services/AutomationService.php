@@ -27,6 +27,9 @@ final class AutomationService
         'flag_termination' => 'Flag services for termination review',
         'retry_provisioning' => 'Provision paid services / retry failures',
         'apply_pending_changes' => 'Apply paid plan changes',
+        'domain_renewals' => 'Generate domain renewal invoices',
+        'domain_reminders' => 'Send domain expiry reminders',
+        'expire_domains' => 'Mark expired domains',
         'reactivate_paid' => 'Reactivate paid services',
         'reconcile_payments' => 'Verify pending online payments',
         'sync_hosting' => 'Synchronise hosting accounts',
@@ -269,6 +272,62 @@ final class AutomationService
             }
         }
         return $done;
+    }
+
+    private function domainRenewals(): int
+    {
+        if (!Settings::bool('auto_invoice_enabled')) {
+            return 0;
+        }
+        $count = 0;
+        foreach (DomainService::renewalsDue() as $d) {
+            $before = (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices');
+            try {
+                $invoiceId = DomainService::generateRenewal((int) $d['id']);
+            } catch (\Throwable $e) {
+                $this->fail();
+                AutomationLog::record('domain_renewals', 'renewal_invoice', 'failed', $e->getMessage(), 'domain', (int) $d['id']);
+                continue;
+            }
+            if ($invoiceId && (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices') > $before) {
+                $count++;
+                AutomationLog::record('domain_renewals', 'renewal_invoice', 'success', 'Invoice ' . db()->fetchColumn('SELECT number FROM invoices WHERE id = ?', [$invoiceId]) . ' generated', 'domain', (int) $d['id']);
+            }
+        }
+        return $count;
+    }
+
+    private function domainReminders(): int
+    {
+        $days = Settings::intList('domain_reminder_days');
+        sort($days);
+        $sent = 0;
+        foreach (DomainService::expiring() as $d) {
+            $until = (int) ((strtotime($d['expiry_date']) - strtotime(today())) / 86400);
+            $data = [
+                'domain' => $d['domain'],
+                'expiry_date' => date_fmt($d['expiry_date']),
+                'domain_url' => absolute_url('/client/domains/' . $d['id']),
+            ];
+            if ($until === 0) {
+                if (Settings::bool('reminder_on_due_date')) {
+                    $sent += NotificationService::notifyCustomer((int) $d['customer_id'], 'domain_renewal_reminder', $data, "domain_reminder:{$d['id']}:{$d['expiry_date']}:due");
+                }
+                continue;
+            }
+            foreach ($days as $threshold) {
+                if ($until <= $threshold) {
+                    $sent += NotificationService::notifyCustomer((int) $d['customer_id'], 'domain_renewal_reminder', $data, "domain_reminder:{$d['id']}:{$d['expiry_date']}:{$threshold}");
+                    break;
+                }
+            }
+        }
+        return $sent;
+    }
+
+    private function expireDomains(): int
+    {
+        return DomainService::expireOverdue();
     }
 
     private function reactivatePaid(): int

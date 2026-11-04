@@ -196,8 +196,12 @@ final class BillingService
     {
         $db = db();
         $followUps = [];
-        $items = $db->fetchAll('SELECT * FROM invoice_items WHERE invoice_id = ? AND service_id IS NOT NULL AND applied_at IS NULL FOR UPDATE', [$invoiceId]);
+        $items = $db->fetchAll('SELECT * FROM invoice_items WHERE invoice_id = ? AND (service_id IS NOT NULL OR domain_id IS NOT NULL) AND applied_at IS NULL FOR UPDATE', [$invoiceId]);
         foreach ($items as $item) {
+            if ($item['domain_id'] !== null) {
+                DomainService::applyPaidItem($db, $item);
+                continue;
+            }
             $service = $db->fetch('SELECT * FROM services WHERE id = ? FOR UPDATE', [$item['service_id']]);
             if (!$service) {
                 continue;
