@@ -10,7 +10,7 @@
     <?php if (!$pricing): ?>
       <div class="empty">No extensions priced yet.<?= $canEdit ? ' Add the first below.' : '' ?></div>
     <?php else: ?>
-    <div class="table-scroll"><table>
+    <table>
       <thead><tr><th>Extension</th><th class="text-right">Registration /yr</th><th class="text-right">Renewal /yr</th><th class="text-right">Transfer /yr</th><th>Status</th><?php if ($canEdit): ?><th></th><?php endif; ?></tr></thead>
       <tbody>
       <?php foreach ($pricing as $t): ?>
@@ -39,7 +39,7 @@
         </tr>
       <?php endforeach; ?>
       </tbody>
-    </table></div>
+    </table>
     <?php endif; ?>
   </div>
 

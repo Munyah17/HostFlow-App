@@ -85,7 +85,9 @@ function back(string $fallback = '/'): never
 {
     $ref = $_SERVER['HTTP_REFERER'] ?? '';
     $host = $_SERVER['HTTP_HOST'] ?? '';
-    if ($ref !== '' && parse_url($ref, PHP_URL_HOST) === $host) {
+    $refPort = parse_url($ref, PHP_URL_PORT);
+    $refAuthority = parse_url($ref, PHP_URL_HOST) . ($refPort ? ':' . $refPort : '');
+    if ($ref !== '' && strcasecmp($refAuthority, $host) === 0) {
         header('Location: ' . $ref, true, 302);
         exit;
     }
