@@ -108,7 +108,21 @@ final class CpanelWhmProvider implements HostingProviderInterface
 
     public function listAccounts(): ProviderResult
     {
-        $res = $this->call('listaccts');
+        // Scope to accounts owned by this reseller via WHM API 1 output filtering
+        // (api.filter.a.field=owner, eq). Reseller tokens are already scoped by WHM;
+        // this mainly protects against a root-level token reconciling other
+        // resellers' accounts. 'root' itself stays unfiltered so the sync report
+        // can still surface every unmanaged account on the server.
+        $params = [];
+        if ($this->username !== '' && strtolower($this->username) !== 'root') {
+            $params = [
+                'api.filter.enable' => 1,
+                'api.filter.a.field' => 'owner',
+                'api.filter.a.arg0' => $this->username,
+                'api.filter.a.type' => 'eq',
+            ];
+        }
+        $res = $this->call('listaccts', $params);
         if (!$res->success) {
             return $res;
         }
