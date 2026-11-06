@@ -37,15 +37,26 @@
   <div class="card">
     <?php if ($payable): ?>
       <div class="card-head"><h3>Pay <?= money($balance, $invoice['currency']) ?></h3></div>
-      <?php if ($paynow): ?>
+      <?php if ($paynow || $stripe): ?>
+        <?php if ($paynow): ?>
         <form method="post" action="<?= url('/client/invoices/' . $invoice['id'] . '/pay') ?>">
           <?= csrf_field() ?>
+          <input type="hidden" name="gateway" value="paynow">
           <input type="hidden" name="method" value="web">
-          <button class="btn primary" type="submit" style="width:100%">Pay online (card / bank)</button>
+          <button class="btn primary" type="submit" style="width:100%">Pay with Paynow</button>
         </form>
-        <?php if ($mobile): ?>
+        <?php endif; ?>
+        <?php if ($stripe): ?>
+        <form method="post" action="<?= url('/client/invoices/' . $invoice['id'] . '/pay') ?>"<?= $paynow ? ' style="margin-top:12px"' : '' ?>>
+          <?= csrf_field() ?>
+          <input type="hidden" name="gateway" value="stripe">
+          <button class="btn<?= $paynow ? ' ghost' : ' primary' ?>" type="submit" style="width:100%">Pay by card (Stripe)</button>
+        </form>
+        <?php endif; ?>
+        <?php if ($paynow && $mobile): ?>
         <form method="post" action="<?= url('/client/invoices/' . $invoice['id'] . '/pay') ?>" style="margin-top:12px">
           <?= csrf_field() ?>
+          <input type="hidden" name="gateway" value="paynow">
           <input type="hidden" name="method" value="mobile">
           <div class="form-grid">
             <label class="field"><span>Mobile money</span>

@@ -59,6 +59,10 @@ final class SettingsController extends Controller
             ['paynow_integration_key', 'Paynow integration key', 'password', ''],
             ['paynow_auth_email', 'Paynow account email (for reference)', 'email', 'email|max:190'],
             ['paynow_mobile_enabled', 'Offer mobile money (EcoCash etc.) on Paynow', 'checkbox', ''],
+            ['stripe_enabled', 'Accept Stripe (card) payments', 'checkbox', ''],
+            ['stripe_secret_key', 'Stripe secret key (sk_live_… or sk_test_…)', 'password', ''],
+            ['stripe_publishable_key', 'Stripe publishable key (pk_…)', 'text', 'max:190'],
+            ['stripe_webhook_secret', 'Stripe webhook signing secret (whsec_…)', 'password', ''],
         ]],
         'domains' => ['label' => 'Domains', 'fields' => [
             ['domain_orders_enabled', 'Allow clients to order domains from the portal', 'checkbox', ''],

@@ -16,7 +16,7 @@ final class Settings
     private static ?array $cache = null;
 
     /** Keys whose values are always stored encrypted. */
-    public const SECRET_KEYS = ['smtp_password', 'paynow_integration_key'];
+    public const SECRET_KEYS = ['smtp_password', 'paynow_integration_key', 'stripe_secret_key', 'stripe_webhook_secret'];
 
     public const DEFAULTS = [
         // General / business
@@ -63,6 +63,10 @@ final class Settings
         'paynow_integration_key' => '',
         'paynow_auth_email' => '',
         'paynow_mobile_enabled' => '0',
+        'stripe_enabled' => '0',
+        'stripe_secret_key' => '',
+        'stripe_publishable_key' => '',
+        'stripe_webhook_secret' => '',
         // Security / portal
         'allow_registration' => '1',
         'min_password_length' => '10',

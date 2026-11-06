@@ -1,0 +1,49 @@
+# Deploy HostFlow to cPanel automatically on every push to main.
+# Works like "git push -> Vercel": commit locally, push to GitHub, files deploy to cPanel.
+#
+# ONE-TIME SETUP (GitHub.com -> repo -> Settings -> Secrets and variables -> Actions -> New repository secret):
+#   FTP_SERVER   e.g. ftp.globalspaceweb.co.zw  (or your domain / cPanel FTP host)
+#   FTP_USERNAME e.g. hostflow@globalspaceweb.co.zw or your cPanel user
+#   FTP_PASSWORD the FTP or cPanel password
+#
+# In cPanel create an FTP account pointed at the app's install directory
+# (the folder that contains app/, public/, config/, etc.) so files land in the right place.
+name: Deploy to cPanel
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}   # lets you click "Run workflow" manually too
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Composer dependencies (production)
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Deploy to cPanel over FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps          # change to "ftp" if your host doesn't allow FTPS
+          # upload only what the app needs; never touch the live .env or storage
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .env
+            .env.example
+            .github/**
+            tests/**
+            docs/**
+            storage/**
+            index.html
+            **/node_modules/**
+            **/_*.js
+          # delete: false keeps uploads/storage files you create on the server safe
+          dangerous-clean-slate: false

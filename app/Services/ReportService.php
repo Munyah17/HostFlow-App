@@ -49,6 +49,24 @@ final class ReportService
         return array_map(fn ($v) => is_numeric($v) ? $v + 0 : $v, $row ?: []);
     }
 
+    /** Expense totals (returns zeros before the expenses migration runs). */
+    public static function expenses(): array
+    {
+        try {
+            $row = db()->fetch(
+                "SELECT
+                   COALESCE(SUM(CASE WHEN expense_date >= DATE_FORMAT(CURDATE(), '%Y-%m-01') THEN amount END),0) AS month,
+                   COALESCE(SUM(CASE WHEN expense_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN amount END),0) AS last_30,
+                   COALESCE(SUM(amount),0) AS total,
+                   COALESCE(SUM(CASE WHEN recurring = 1 THEN amount END),0) AS recurring
+                 FROM expenses"
+            );
+            return array_map('floatval', $row ?: ['month' => 0, 'last_30' => 0, 'total' => 0, 'recurring' => 0]);
+        } catch (\PDOException) {
+            return ['month' => 0.0, 'last_30' => 0.0, 'total' => 0.0, 'recurring' => 0.0];
+        }
+    }
+
     /** Payments collected per month for the last N months: [['label' => 'Jan', 'value' => 12.0, 'month' => '2026-01'], ...] */
     public static function monthlyRevenue(int $months = 12): array
     {

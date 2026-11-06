@@ -17,6 +17,7 @@ final class ReportController extends Controller
             'title' => 'Reports',
             'days' => $days,
             'c' => ReportService::counts(),
+            'expenses' => ReportService::expenses(),
             'mrr' => ['total' => ReportService::mrr(), 'web' => ReportService::mrr('web'), 'email' => ReportService::mrr('email')],
             'revenue' => ReportService::monthlyRevenue(12),
             'newCustomers' => ReportService::monthlyCustomers(12),

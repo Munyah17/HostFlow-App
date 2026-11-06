@@ -16,6 +16,8 @@ return function (Router $r): void {
 
     // Public
     $r->get('/', [PublicController::class, 'home']);
+    $r->get('/order/{id}', [PublicController::class, 'showOrder']);
+    $r->post('/order/{id}', [PublicController::class, 'order']);
     $r->post('/webhooks/paynow', [PublicController::class, 'paynowWebhook'], ['nocsrf']);
     $r->post('/webhooks/gateway/{gateway}', [PublicController::class, 'gatewayWebhook'], ['nocsrf']);
     $r->get('/cron/run', [PublicController::class, 'webCron']);
@@ -111,6 +113,10 @@ return function (Router $r): void {
         $r->post('/support/tickets/{id}/update', [Admin\SupportController::class, 'update']);
 
         $r->get('/reports', [Admin\ReportController::class, 'index']);
+
+        $r->get('/expenses', [Admin\ExpenseController::class, 'index']);
+        $r->post('/expenses', [Admin\ExpenseController::class, 'store']);
+        $r->post('/expenses/{id}/delete', [Admin\ExpenseController::class, 'delete'], ['super']);
     });
 
     // Super Admin only

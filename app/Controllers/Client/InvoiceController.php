@@ -29,6 +29,7 @@ final class InvoiceController extends Controller
     {
         $invoice = $this->invoice($id);
         $paynow = GatewayRegistry::get('paynow');
+        $stripe = GatewayRegistry::get('stripe');
         return $this->view('client.invoices.show', [
             'title' => 'Invoice ' . $invoice['number'],
             'invoice' => $invoice,
@@ -37,6 +38,7 @@ final class InvoiceController extends Controller
             'payable' => InvoiceService::isPayable($invoice),
             'payments' => db()->fetchAll("SELECT * FROM payments WHERE invoice_id = ? AND status <> 'pending' ORDER BY id DESC", [$id]),
             'paynow' => $paynow && $paynow->isAvailable() ? $paynow : null,
+            'stripe' => $stripe && $stripe->isAvailable() ? $stripe : null,
             'mobile' => $paynow instanceof PaynowGateway && $paynow->mobileEnabled(),
             'bankInstructions' => (string) setting('bank_instructions', ''),
         ]);
@@ -61,13 +63,14 @@ final class InvoiceController extends Controller
         }
         $method = (string) Request::input('method', 'web');
         $phone = preg_replace('/\D+/', '', (string) Request::input('phone', ''));
-        $mobile = $method === 'mobile' && $phone !== '';
+        $gatewayId = (string) Request::input('gateway', 'paynow');
+        $mobile = $gatewayId === 'paynow' && $method === 'mobile' && $phone !== '';
         try {
-            $payment = PaymentService::createPending($id, 'paynow', $mobile ? (string) Request::input('mobile_method', 'ecocash') : null);
-            $gateway = GatewayRegistry::get('paynow');
+            $gateway = GatewayRegistry::get($gatewayId);
             if (!$gateway || !$gateway->isAvailable()) {
-                throw new \RuntimeException('Online payments are not configured. Please contact us to pay this invoice.');
+                throw new \RuntimeException('This payment method is not configured. Please contact us to pay this invoice.');
             }
+            $payment = PaymentService::createPending($id, $gatewayId, $mobile ? (string) Request::input('mobile_method', 'ecocash') : null);
             $result = $gateway->initiate($payment, $invoice, $this->customer(), $mobile ? ['phone' => $phone, 'method' => (string) Request::input('mobile_method', 'ecocash')] : []);
             db()->update('payments', [
                 'poll_url' => $result['poll_url'] ?? null,

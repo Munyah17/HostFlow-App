@@ -6,6 +6,8 @@
 <div class="stats">
   <div class="stat"><span>Monthly recurring revenue</span><strong><?= money($mrr['total']) ?></strong><small><?= money($mrr['web']) ?> web · <?= money($mrr['email']) ?> email</small></div>
   <div class="stat"><span>Collected this month</span><strong><?= money($c['revenue_month']) ?></strong><small><?= (int) $c['payments_month'] ?> payment(s)</small></div>
+  <div class="stat"><span>Expenses this month</span><strong><?= money($expenses['month']) ?></strong><small><?= money($expenses['recurring']) ?> recurring · <a href="<?= url('/expenses') ?>">ledger</a></small></div>
+  <div class="stat"><span>Net this month</span><strong><?= money($c['revenue_month'] - $expenses['month']) ?></strong><small>Collected minus expenses</small></div>
   <div class="stat"><span>Active services</span><strong><?= (int) $c['web_active'] + (int) $c['email_active'] ?></strong><small><?= (int) $c['web_active'] ?> web · <?= (int) $c['email_active'] ?> email</small></div>
   <div class="stat"><span>Customers</span><strong><?= (int) $c['customers'] ?></strong><small>+<?= (int) $c['new_customers_month'] ?> this month</small></div>
   <div class="stat"><span>Overdue balances</span><strong><?= money($c['overdue_amount']) ?></strong><small><?= (int) $c['overdue_customers'] ?> customer(s)</small></div>

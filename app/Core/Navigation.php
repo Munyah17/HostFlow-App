@@ -29,6 +29,7 @@ final class Navigation
             ['label' => 'Payments', 'url' => '/payments', 'icon' => '$', 'roles' => [self::S, self::A], 'order' => 70],
             ['label' => 'Automation', 'url' => '/automation', 'icon' => '↻', 'roles' => [self::S, self::A], 'order' => 80],
             ['label' => 'Support', 'url' => '/support', 'icon' => '?', 'roles' => [self::S, self::A], 'order' => 90],
+            ['label' => 'Expenses', 'url' => '/expenses', 'icon' => '−', 'roles' => [self::S, self::A], 'order' => 95],
             ['label' => 'Reports', 'url' => '/reports', 'icon' => '▥', 'roles' => [self::S, self::A], 'order' => 100],
             ['label' => 'Integrations', 'url' => '/integrations', 'icon' => '⇄', 'roles' => [self::S], 'order' => 110],
             ['label' => 'Administrators', 'url' => '/staff', 'icon' => '☺', 'roles' => [self::S], 'order' => 120],
