@@ -8,7 +8,7 @@
   <div class="stat"><a href="<?= url('/hosting', ['status' => 'suspended']) ?>"><span>Suspended services</span><strong><?= (int) $c['suspended'] ?></strong><small>Web and email</small></a></div>
   <div class="stat"><a href="<?= url('/hosting', ['status' => 'provisioning_failed']) ?>"><span>Provisioning failures</span><strong><?= (int) $c['provisioning_failed'] ?></strong><small><?= (int) $c['provisioning'] ?> awaiting provisioning</small></a></div>
   <div class="stat"><span>Collected this month</span><strong><?= money($c['revenue_month']) ?></strong><small><?= (int) $c['payments_month'] ?> payment(s)</small></div>
-  <div class="stat"><span>Automation</span><strong style="font-size:18px"><?= $lastRun ? badge($lastRun['status']) : badge('failed', 'Never run') ?></strong><small><?= $lastRun ? 'Last run ' . datetime_fmt($lastRun['started_at']) : 'Cron not configured' ?></small></div>
+  <div class="stat"><span>Automation</span><strong class="stat-badge"><?= $lastRun ? badge($lastRun['status']) : badge('failed', 'Never run') ?></strong><small><?= $lastRun ? 'Last run ' . datetime_fmt($lastRun['started_at']) : 'Cron not configured' ?></small></div>
 </div>
 
 <div class="columns">

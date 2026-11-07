@@ -50,7 +50,7 @@
 
     <h4>Cron job</h4>
     <p class="small">Schedule HostFlow automation in cPanel → Cron Jobs, every 5 minutes:</p>
-    <p class="mono small" style="background:#f6f9ff;padding:10px;border-radius:8px;word-break:break-all">*/5 * * * * php -q <?= e(BASE_PATH . '/cron/run.php') ?></p>
+    <p class="mono small code-block">*/5 * * * * php -q <?= e(BASE_PATH . '/cron/run.php') ?></p>
     <p class="small muted">Or via URL (only when CLI cron is unavailable): <span class="mono"><?= e($cronUrl) ?><?= $cronToken !== '' ? '?token=…' : '' ?></span></p>
   </div>
 </div>

@@ -21,16 +21,21 @@ $pageTitle = $title ?? 'Dashboard';
 <aside class="sidebar" aria-label="Main navigation">
   <div class="brand"><a href="<?= url(Auth::home()) ?>">◈ HostFlow</a><small><?= e(mb_strtoupper((string) setting('business_name'))) ?></small></div>
   <nav class="nav" id="navigation">
+    <?php $lastSection = null; ?>
     <?php foreach (Navigation::forRole($role) as $item): ?>
-      <a href="<?= url($item['url']) ?>" class="<?= Navigation::isActive($item) ? 'active' : '' ?>"<?= Navigation::isActive($item) ? ' aria-current="page"' : '' ?>><span class="symbol" aria-hidden="true"><?= e($item['icon']) ?></span><?= e($item['label']) ?></a>
+      <?php $section = $item['section'] ?? null; ?>
+      <?php if ($section !== $lastSection): $lastSection = $section; ?>
+        <?php if ($section): ?><div class="nav-section"><?= e($section) ?></div><?php endif; ?>
+      <?php endif; ?>
+      <a href="<?= url($item['url']) ?>" class="<?= Navigation::isActive($item) ? 'active' : '' ?>"<?= Navigation::isActive($item) ? ' aria-current="page"' : '' ?>><span class="symbol" aria-hidden="true"><?= icon($item['icon']) ?></span><?= e($item['label']) ?></a>
     <?php endforeach; ?>
   </nav>
   <div class="sidefoot"><?= e(setting('business_name')) ?><br>HostFlow v<?= e(app_version()) ?></div>
 </aside>
 <main class="main">
   <header class="topbar">
-    <div style="display:flex;align-items:center;gap:12px;min-width:0">
-      <label for="nav-toggle" class="hamburger" aria-label="Open menu" role="button" tabindex="0">☰</label>
+    <div class="topbar-left">
+      <label for="nav-toggle" class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0" aria-controls="navigation">☰</label>
       <strong id="breadcrumb"><?= e($pageTitle) ?></strong>
     </div>
     <div class="topright userbox">

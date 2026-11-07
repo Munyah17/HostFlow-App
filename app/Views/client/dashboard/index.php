@@ -4,7 +4,7 @@
     'actions' => '<a class="btn primary" href="' . url('/client/order') . '">+ Order hosting</a>',
 ], null) ?>
 
-<div class="stats">
+<div class="stats three">
   <div class="stat"><a href="<?= url('/client/services') ?>"><span>Active services</span><strong><?= (int) $stats['active'] ?></strong><small><?= (int) $stats['suspended'] ?> suspended</small></a></div>
   <div class="stat"><a href="<?= url('/client/invoices') ?>"><span>Balance due</span><strong><?= money($stats['balance']) ?></strong><small><?= (int) $stats['unpaid'] ?> unpaid invoice(s)</small></a></div>
   <div class="stat"><a href="<?= url('/client/support') ?>"><span>Open tickets</span><strong><?= (int) $stats['tickets'] ?></strong><small>Support</small></a></div>
@@ -46,8 +46,9 @@
       </tbody>
     </table></div>
     <?php endif; ?>
-
-    <h4>Open tickets</h4>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Open tickets</h3><a class="btn small ghost" href="<?= url('/client/support') ?>">All tickets</a></div>
     <?php if (!$tickets): ?><div class="empty">No open tickets. <a href="<?= url('/client/support/create') ?>">Get help</a>.</div><?php else: ?>
     <div class="events">
       <?php foreach ($tickets as $t): ?><div><b><a href="<?= url('/client/support/' . $t['id']) ?>"><?= e($t['number']) ?> · <?= e(str_limit($t['subject'], 50)) ?></a></b><small><?= status_label($t['status']) ?> · updated <?= datetime_fmt($t['updated_at']) ?></small></div><?php endforeach; ?>

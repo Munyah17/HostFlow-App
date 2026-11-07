@@ -5,7 +5,7 @@
     'actions' => '<a class="btn ghost" href="' . url($editing ? '/customers/view/' . $customer['id'] : '/customers') . '">Cancel</a>',
 ], null) ?>
 
-<div class="card" style="max-width:760px">
+<div class="card card-narrow">
   <form method="post" action="<?= url($editing ? '/customers/update/' . $customer['id'] : '/customers') ?>">
     <?= csrf_field() ?>
     <div class="form-grid">

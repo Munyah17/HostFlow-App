@@ -4,6 +4,14 @@
     'actions' => $ordering ? '<a class="btn primary" href="' . url('/client/domains/order') . '">+ Register a domain</a>' : '',
 ], null) ?>
 
+<?php if ($domains): ?>
+<div class="stats three">
+  <div class="stat"><span>Total domains</span><strong><?= (int) $stats['total'] ?></strong><small>Registered &amp; pending</small></div>
+  <div class="stat"><span>Expiring soon</span><strong><?= (int) $stats['expiring'] ?></strong><small>Within 30 days</small></div>
+  <div class="stat"><span>Expired</span><strong><?= (int) $stats['expired'] ?></strong><small>Need attention</small></div>
+</div>
+<?php endif; ?>
+
 <div class="card">
   <?php if (!$domains): ?>
     <div class="empty">No domains yet.<?= $ordering ? ' <a href="' . url('/client/domains/order') . '">Register your first domain</a>.' : '' ?></div>

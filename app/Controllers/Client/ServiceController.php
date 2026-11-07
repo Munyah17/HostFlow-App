@@ -29,7 +29,13 @@ final class ServiceController extends Controller
              WHERE s.customer_id = ? AND s.type = ? AND s.status NOT IN ('terminated','cancelled') ORDER BY s.domain",
             [Auth::customerId(), $type]
         );
-        return $this->view('client.services.index', compact('services') + ['title' => $title, 'type' => $type]);
+        $stats = db()->fetch(
+            "SELECT SUM(status = 'active') AS active, SUM(status = 'suspended') AS suspended,
+                    SUM(status IN ('provisioning','provisioning_failed','pending_payment')) AS pending
+             FROM services WHERE customer_id = ? AND type = ? AND status NOT IN ('terminated','cancelled')",
+            [Auth::customerId(), $type]
+        );
+        return $this->view('client.services.index', compact('services', 'stats') + ['title' => $title, 'type' => $type]);
     }
 
     public function show(int $id): string

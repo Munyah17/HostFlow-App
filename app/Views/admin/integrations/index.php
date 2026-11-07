@@ -21,7 +21,7 @@
         <td><?= $p['last_check_ok'] === null ? '<span class="muted">Not tested</span>' : ($p['last_check_ok'] ? badge('active', 'Connected') : badge('failed', 'Error')) ?><?php if ($p['last_check_message']): ?><br><small class="muted"><?= e(str_limit($p['last_check_message'], 60)) ?></small><?php endif; ?></td>
         <td><?= badge($p['status']) ?></td>
         <td class="text-right">
-          <div class="actions" style="justify-content:flex-end">
+          <div class="actions end">
             <a class="btn small ghost" href="<?= url('/integrations/providers/' . $p['id'] . '/accounts') ?>">Accounts</a>
             <a class="btn small ghost" href="<?= url('/integrations/providers/edit/' . $p['id']) ?>">Edit</a>
             <form method="post" action="<?= url('/integrations/providers/' . $p['id'] . '/test') ?>" class="inline"><?= csrf_field() ?><button class="btn small ghost" type="submit">Test</button></form>

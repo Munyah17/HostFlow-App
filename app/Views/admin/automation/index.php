@@ -15,7 +15,7 @@ $actions = Auth::isSuper()
 <div class="stats three">
   <div class="stat"><span>Notification queue</span><strong><?= (int) $notices['queued'] ?></strong><small>Queued emails</small></div>
   <div class="stat"><span>Failed notifications</span><strong><?= (int) $notices['failed'] ?></strong><small>Need retry or attention</small></div>
-  <div class="stat"><span>Last run</span><strong style="font-size:18px"><?= $lastRun ? badge($lastRun['status']) : badge('muted', '—') ?></strong><small><?= $lastRun ? datetime_fmt($lastRun['finished_at'] ?? $lastRun['started_at']) : 'Cron not configured' ?></small></div>
+  <div class="stat"><span>Last run</span><strong class="stat-badge"><?= $lastRun ? badge($lastRun['status']) : badge('muted', '—') ?></strong><small><?= $lastRun ? datetime_fmt($lastRun['finished_at'] ?? $lastRun['started_at']) : 'Cron not configured' ?></small></div>
 </div>
 
 <div class="columns">

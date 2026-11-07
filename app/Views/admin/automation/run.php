@@ -5,9 +5,9 @@
 ], null) ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($run['status']) ?></strong><small><?= (int) count($logs) ?> log entries</small></div>
-  <div class="stat"><span>Started</span><strong style="font-size:18px"><?= e(date('H:i:s', strtotime($run['started_at']))) ?></strong><small><?= date_fmt($run['started_at']) ?></small></div>
-  <div class="stat"><span>Duration</span><strong style="font-size:18px"><?= $run['finished_at'] ? e(round(strtotime($run['finished_at']) - strtotime($run['started_at'])) . 's') : '—' ?></strong><small><?= $run['finished_at'] ? '' : 'running' ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($run['status']) ?></strong><small><?= (int) count($logs) ?> log entries</small></div>
+  <div class="stat"><span>Started</span><strong class="stat-badge"><?= e(date('H:i:s', strtotime($run['started_at']))) ?></strong><small><?= date_fmt($run['started_at']) ?></small></div>
+  <div class="stat"><span>Duration</span><strong class="stat-badge"><?= $run['finished_at'] ? e(round(strtotime($run['finished_at']) - strtotime($run['started_at'])) . 's') : '—' ?></strong><small><?= $run['finished_at'] ? '' : 'running' ?></small></div>
 </div>
 
 <div class="columns">

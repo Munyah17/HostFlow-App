@@ -1,6 +1,6 @@
 <?= view('components.heading', [
     'title' => $t['number'] . ' · ' . $t['subject'],
-    'subtitle' => ($t['business_name'] ?: $t['full_name']) . ' · ' . e($t['category']) . ' · opened ' . datetime_fmt($t['created_at']),
+    'subtitle' => ($t['business_name'] ?: $t['full_name']) . ' · ' . $t['category'] . ' · opened ' . datetime_fmt($t['created_at']),
     'actions' => '<a class="btn ghost" href="' . url('/customers/view/' . $t['customer_id']) . '">Customer</a><a class="btn ghost" href="' . url('/support') . '">All tickets</a>',
 ], null) ?>
 

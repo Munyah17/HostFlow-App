@@ -55,7 +55,7 @@
 <div class="card">
   <div class="card-head">
     <h3>Upcoming renewals</h3>
-    <form class="filters" method="get" action="<?= url('/reports') ?>" style="margin:0">
+    <form class="filters flush" method="get" action="<?= url('/reports') ?>">
       <select name="days" data-autosubmit>
         <?php foreach ([7, 14, 30, 60, 90] as $d): ?><option value="<?= $d ?>" <?= $days === $d ? 'selected' : '' ?>>Next <?= $d ?> days</option><?php endforeach; ?>
       </select>

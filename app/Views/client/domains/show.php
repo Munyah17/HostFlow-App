@@ -16,7 +16,7 @@
 <?php endif; ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($d['status']) ?></strong><small><?= $d['registrar'] ? 'At ' . e($d['registrar']) : '' ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($d['status']) ?></strong><small><?= $d['registrar'] ? 'At ' . e($d['registrar']) : '' ?></small></div>
   <div class="stat"><span>Registered</span><strong><?= date_fmt($d['registered_at']) ?></strong><small></small></div>
   <div class="stat"><span>Expiry date</span><strong><?= date_fmt($d['expiry_date']) ?></strong><small><?= $d['auto_renew'] ? 'Renewal invoiced automatically' : 'Manual renewal' ?></small></div>
 </div>
@@ -29,7 +29,7 @@
         <form method="post" action="<?= url('/client/domains/' . $d['id'] . '/renew') ?>" class="inline" data-confirm="Generate a renewal invoice for <?= e($d['domain']) ?>?" data-confirm-style="primary"><?= csrf_field() ?><button class="btn primary">Renew now</button></form>
       <?php endif; ?>
     </div>
-    <dl class="details" style="margin-top:14px">
+    <dl class="details mt-14">
       <div><dt>Nameservers</dt><dd><?= $d['nameservers'] ? e($d['nameservers']) : '—' ?></dd></div>
       <div><dt>Renewal price</dt><dd><?= $d['renewal_price'] > 0 ? money($d['renewal_price']) . ' / year' : '—' ?></dd></div>
     </dl>

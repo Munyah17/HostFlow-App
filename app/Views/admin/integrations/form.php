@@ -5,7 +5,7 @@
     'actions' => '<a class="btn ghost" href="' . url('/integrations') . '">Cancel</a>',
 ], null) ?>
 
-<div class="card" style="max-width:760px">
+<div class="card card-narrow">
   <form method="post" action="<?= url($editing ? '/integrations/providers/update/' . $provider['id'] : '/integrations/providers') ?>">
     <?= csrf_field() ?>
     <div class="form-grid">
@@ -28,7 +28,7 @@
         </select>
         <?= field_error('status') ?>
       </label>
-      <label class="check" style="align-self:end"><input type="checkbox" name="verify_ssl" value="1" <?= old('verify_ssl', $provider['verify_ssl'] ?? 1) ? 'checked' : '' ?>> Verify SSL certificate</label>
+      <label class="check end"><input type="checkbox" name="verify_ssl" value="1" <?= old('verify_ssl', $provider['verify_ssl'] ?? 1) ? 'checked' : '' ?>> Verify SSL certificate</label>
     </div>
     <div class="form-actions"><button type="submit" class="btn primary"><?= $editing ? 'Save changes' : 'Add server' ?></button></div>
   </form>

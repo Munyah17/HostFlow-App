@@ -13,9 +13,18 @@ final class DomainController extends Controller
 {
     public function index(): string
     {
+        $domains = db()->fetchAll('SELECT * FROM domains WHERE customer_id = ? ORDER BY expiry_date IS NULL, expiry_date', [Auth::customerId()]);
+        $stats = db()->fetch(
+            "SELECT COUNT(*) AS total,
+                    SUM(status = 'active' AND expiry_date IS NOT NULL AND expiry_date <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)) AS expiring,
+                    SUM(status = 'expired') AS expired
+             FROM domains WHERE customer_id = ?",
+            [Auth::customerId()]
+        );
         return $this->view('client.domains.index', [
             'title' => 'My domains',
-            'domains' => db()->fetchAll('SELECT * FROM domains WHERE customer_id = ? ORDER BY expiry_date IS NULL, expiry_date', [Auth::customerId()]),
+            'domains' => $domains,
+            'stats' => $stats,
             'ordering' => Settings::bool('domain_orders_enabled'),
         ]);
     }

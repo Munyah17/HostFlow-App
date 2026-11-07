@@ -4,7 +4,7 @@
     'actions' => '<a class="btn ghost" href="' . url('/support') . '">Cancel</a>',
 ], null) ?>
 
-<div class="card" style="max-width:760px">
+<div class="card card-narrow">
   <form method="post" action="<?= url('/support') ?>">
     <?= csrf_field() ?>
     <div class="form-grid">

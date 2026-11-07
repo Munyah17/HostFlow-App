@@ -31,10 +31,10 @@ $prices = function (array $p): string {
       <?php foreach ($byType[$type] as $p): ?>
         <div class="plan">
           <div class="plan-top">
-            <div><h4 style="margin:0"><?= e($p['name']) ?></h4><small class="muted"><?= e($p['description'] ?: '') ?></small></div>
+            <div><h4><?= e($p['name']) ?></h4><small class="muted"><?= e($p['description'] ?: '') ?></small></div>
             <?= badge($p['status']) ?>
           </div>
-          <p style="margin:10px 0 0"><strong><?= $p['price_monthly'] !== null ? money($p['price_monthly']) . ' <small class="muted">/ mo</small>' : '' ?></strong><br><small class="muted"><?= e($prices($p)) ?></small></p>
+          <p class="plan-price"><strong><?= $p['price_monthly'] !== null ? money($p['price_monthly']) . ' <small class="muted">/ mo</small>' : '' ?></strong><br><small class="muted"><?= e($prices($p)) ?></small></p>
           <ul>
             <?php if ($p['storage_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $p['storage_gb'], 2), '0'), '.')) ?> GB storage</li><?php endif; ?>
             <?php if ($p['bandwidth_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $p['bandwidth_gb'], 2), '0'), '.')) ?> GB bandwidth</li><?php endif; ?>

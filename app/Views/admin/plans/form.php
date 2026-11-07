@@ -13,7 +13,7 @@ $field = function (string $name, string $label, string $type = 'text', string $e
     'actions' => '<a class="btn ghost" href="' . url('/hosting/plans') . '">Cancel</a>',
 ], null) ?>
 
-<div class="card" style="max-width:860px">
+<div class="card card-wide">
   <form method="post" action="<?= url($editing ? '/hosting/plans/update/' . $plan['id'] : '/hosting/plans') ?>">
     <?= csrf_field() ?>
     <div class="form-grid">
@@ -53,7 +53,7 @@ $field = function (string $name, string $label, string $type = 'text', string $e
         <?= $field('databases_allowed', 'Databases', 'number', 'min="0" step="1"') ?>
         <?= $field('sort_order', 'Sort order', 'number', 'min="0" step="1"') ?>
       </div>
-      <label class="field"><span>Feature list (one per line, shown to clients)</span><textarea name="features" maxlength="5000" style="min-height:80px"><?= $val('features') ?></textarea><?= field_error('features') ?></label>
+      <label class="field"><span>Feature list (one per line, shown to clients)</span><textarea name="features" maxlength="5000" class="ta-sm"><?= $val('features') ?></textarea><?= field_error('features') ?></label>
     </fieldset>
 
     <fieldset><legend>Provisioning</legend>

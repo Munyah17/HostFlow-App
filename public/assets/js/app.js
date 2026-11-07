@@ -8,6 +8,12 @@
   document.querySelectorAll('.nav a').forEach(function (a) {
     a.addEventListener('click', function () { if (toggle) toggle.checked = false; });
   });
+  var burger = document.querySelector('.hamburger');
+  if (burger && toggle) {
+    burger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.checked = !toggle.checked; }
+    });
+  }
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       if (toggle) toggle.checked = false;
@@ -140,17 +146,18 @@
   });
 
   // Payment status polling on the payment return page.
-  var poll = document.querySelector('[data-payment-poll]');
-  if (poll) {
+  var poll = document.querySelector('[data-poll]');
+  if (poll && poll.dataset.pollStatus) {
     var attempts = 0;
+    var messageEl = document.querySelector('[data-poll-message]');
     var check = function () {
       attempts++;
-      fetch(poll.dataset.paymentPoll, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+      fetch(poll.dataset.pollStatus, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
         .then(function (r) { return r.json(); })
         .then(function (data) {
-          poll.querySelector('[data-status]').textContent = data.message || data.status;
+          if (messageEl && data.message) messageEl.textContent = data.message;
           if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled') {
-            setTimeout(function () { window.location.href = poll.dataset.redirect; }, 1500);
+            setTimeout(function () { window.location.href = poll.dataset.pollDone || poll.dataset.pollUrl; }, 1500);
           } else if (attempts < 40) {
             setTimeout(check, 6000);
           }

@@ -13,7 +13,7 @@
   <div class="card">
     <div class="card-head">
       <h3>Ledger</h3>
-      <form class="filters" method="get" action="<?= url('/expenses') ?>" style="margin:0">
+      <form class="filters flush" method="get" action="<?= url('/expenses') ?>">
         <input type="month" name="month" value="<?= e($month) ?>" data-autosubmit>
       </form>
     </div>

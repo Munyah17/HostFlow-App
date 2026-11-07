@@ -14,7 +14,7 @@ $actions = '<a class="btn ghost" href="' . url('/customers/edit/' . $customer['i
 <div class="stats three">
   <div class="stat"><span>Outstanding balance</span><strong><?= money($balance) ?></strong><small>Unpaid invoices</small></div>
   <div class="stat"><span>Hosting services</span><strong><?= (int) $counts['services'] ?></strong><small>Web and email</small></div>
-  <div class="stat"><span>Account status</span><strong style="font-size:18px"><?= badge($customer['status']) ?></strong><small><?= $user ? 'Portal login enabled' : 'No portal login' ?></small></div>
+  <div class="stat"><span>Account status</span><strong class="stat-badge"><?= badge($customer['status']) ?></strong><small><?= $user ? 'Portal login enabled' : 'No portal login' ?></small></div>
 </div>
 
 <div class="tabs">
@@ -35,7 +35,7 @@ $actions = '<a class="btn ghost" href="' . url('/customers/edit/' . $customer['i
         <div><dt>Address</dt><dd><?= e($customer['address']) ?: '—' ?></dd></div>
         <div><dt>City / Country</dt><dd><?= e(trim(($customer['city'] ?? '') . ' ' . ($customer['country'] ?? ''))) ?: '—' ?></dd></div>
       </dl>
-      <?php if ($customer['notes']): ?><h4>Staff notes</h4><p class="small" style="white-space:pre-wrap"><?= e($customer['notes']) ?></p><?php endif; ?>
+      <?php if ($customer['notes']): ?><h4>Staff notes</h4><p class="small prewrap"><?= e($customer['notes']) ?></p><?php endif; ?>
     </div>
     <div class="card">
       <div class="card-head"><h3>Account access</h3></div>

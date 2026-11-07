@@ -33,20 +33,20 @@ $fromLabel = function (array $f): string {
 <?php endif; ?>
 <?php foreach ([['web', 'Web hosting', $web], ['email', 'Email hosting', $email]] as [$type, $label, $list]): ?>
   <?php if (!$list) { continue; } ?>
-  <h2 style="margin:30px 0 14px;letter-spacing:-.4px"><?= e($label) ?></h2>
+  <h2 class="section-h"><?= e($label) ?></h2>
   <div class="plan-grid<?= count($list) >= 3 ? ' three' : '' ?>">
     <?php foreach ($list as $p): ?>
       <?php $f = $from($p); ?>
       <div class="plan">
-        <div class="plan-top"><div><h4 style="margin:0"><?= e($p['name']) ?></h4><small class="muted"><?= $type === 'email' ? 'Email hosting' : 'Web hosting' ?></small></div><strong><?= $f ? $fromLabel($f) : '' ?></strong></div>
-        <?php if ($p['description']): ?><p class="small muted" style="margin:8px 0"><?= e($p['description']) ?></p><?php endif; ?>
+        <div class="plan-top"><div><h4><?= e($p['name']) ?></h4><small class="muted"><?= $type === 'email' ? 'Email hosting' : 'Web hosting' ?></small></div><strong><?= $f ? $fromLabel($f) : '' ?></strong></div>
+        <?php if ($p['description']): ?><p class="small muted my-8"><?= e($p['description']) ?></p><?php endif; ?>
         <ul>
           <?php if ($p['storage_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $p['storage_gb'], 2), '0'), '.')) ?> GB storage</li><?php endif; ?>
           <?php if ($p['bandwidth_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $p['bandwidth_gb'], 2), '0'), '.')) ?> GB bandwidth</li><?php endif; ?>
           <?php if ($p['email_accounts'] !== null): ?><li><?= (int) $p['email_accounts'] ?> email account(s)</li><?php endif; ?>
           <?php foreach (array_slice(array_filter(array_map('trim', explode("\n", (string) $p['features']))), 0, 4) as $feat): ?><li><?= e($feat) ?></li><?php endforeach; ?>
         </ul>
-        <a class="btn primary" href="<?= url('/order/' . (int) $p['id']) ?>" style="width:100%;justify-content:center">Order now</a>
+        <a class="btn primary btn-block" href="<?= url('/order/' . (int) $p['id']) ?>">Order now</a>
       </div>
     <?php endforeach; ?>
   </div>

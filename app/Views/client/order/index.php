@@ -38,17 +38,17 @@ $email = array_filter($plans, fn ($p) => $p['type'] === 'email');
         </select>
         <?= field_error('billing_cycle') ?>
       </label>
-      <p style="font-size:20px"><strong data-price-output>—</strong></p>
+      <p class="price-lg"><strong data-price-output>—</strong></p>
       <div class="form-actions"><button type="submit" class="btn primary">Continue to payment</button></div>
     </form>
   </div>
   <div class="card">
     <div class="card-head"><h3>Plans</h3></div>
-    <div class="plan-grid" style="grid-template-columns:1fr">
+    <div class="plan-grid one">
       <?php foreach ($plans as $p): ?>
         <div class="plan">
-          <div class="plan-top"><div><h4 style="margin:0"><?= e($p['name']) ?></h4><small class="muted"><?= $p['type'] === 'email' ? 'Email hosting' : 'Web hosting' ?></small></div><strong><?= $p['price_monthly'] !== null ? money($p['price_monthly']) . '<small class="muted">/mo</small>' : '' ?></strong></div>
-          <p class="small muted" style="margin:8px 0"><?= e($p['description'] ?: '') ?></p>
+          <div class="plan-top"><div><h4><?= e($p['name']) ?></h4><small class="muted"><?= $p['type'] === 'email' ? 'Email hosting' : 'Web hosting' ?></small></div><strong><?= $p['price_monthly'] !== null ? money($p['price_monthly']) . '<small class="muted">/mo</small>' : '' ?></strong></div>
+          <p class="small muted my-8"><?= e($p['description'] ?: '') ?></p>
           <ul>
             <?php if ($p['storage_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $p['storage_gb'], 2), '0'), '.')) ?> GB storage</li><?php endif; ?>
             <?php if ($p['email_accounts'] !== null): ?><li><?= (int) $p['email_accounts'] ?> email account(s)</li><?php endif; ?>

@@ -14,9 +14,9 @@ $open = !in_array($s['status'], ['terminated', 'cancelled'], true);
 ], null) ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($s['status']) ?></strong><small><?= $s['provider_status'] ? 'Server: ' . e($s['provider_status']) : 'Not provisioned' ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($s['status']) ?></strong><small><?= $s['provider_status'] ? 'Server: ' . e($s['provider_status']) : 'Not provisioned' ?></small></div>
   <div class="stat"><span>Billing</span><strong><?= money($s['price']) ?></strong><small><?= e(cycle_label($s['billing_cycle'])) ?> · next due <?= date_fmt($s['next_due_date']) ?></small></div>
-  <div class="stat"><span>Server sync</span><strong style="font-size:18px"><?= badge($s['sync_status']) ?></strong><small><?= $s['last_synced_at'] ? 'Checked ' . datetime_fmt($s['last_synced_at']) : 'Never checked' ?></small></div>
+  <div class="stat"><span>Server sync</span><strong class="stat-badge"><?= badge($s['sync_status']) ?></strong><small><?= $s['last_synced_at'] ? 'Checked ' . datetime_fmt($s['last_synced_at']) : 'Never checked' ?></small></div>
 </div>
 
 <?php if ($s['last_error']): ?><div class="alert error"><b>Last error:</b> <?= e($s['last_error']) ?></div><?php endif; ?>
@@ -37,72 +37,75 @@ $open = !in_array($s['status'], ['terminated', 'cancelled'], true);
       <div><dt>Disk usage</dt><dd><?= $s['disk_used_mb'] !== null ? e(number_format((float) $s['disk_used_mb'], 0)) . ' / ' . ($s['disk_limit_mb'] !== null ? e(number_format((float) $s['disk_limit_mb'], 0)) : '∞') . ' MB' : '—' ?></dd></div>
       <div><dt>Domain expiry</dt><dd><?= date_fmt($s['domain_expiry_date']) ?><?= $s['domain_registrar'] ? ' <small class="muted">(' . e($s['domain_registrar']) . ')</small>' : '' ?></dd></div>
     </dl>
-    <?php if ($s['notes']): ?><h4>Staff notes</h4><p class="small" style="white-space:pre-wrap"><?= e($s['notes']) ?></p><?php endif; ?>
+    <?php if ($s['notes']): ?><h4>Staff notes</h4><p class="small prewrap"><?= e($s['notes']) ?></p><?php endif; ?>
 
     <h4>Actions</h4>
     <div class="actions">
       <?php if ($awaiting): ?>
         <form method="post" action="<?= url('/hosting/' . $s['id'] . '/provision') ?>" class="inline" data-confirm="Create the hosting account on the server now?" data-confirm-style="primary"><?= csrf_field() ?><button class="btn primary">Provision now</button></form>
       <?php endif; ?>
-      <?php if ($active && $s['provider_username']): ?>
-        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/login') ?>" class="inline" target="_blank"><?= csrf_field() ?><button class="btn ghost">Log in to panel</button></form>
-      <?php endif; ?>
       <?php if ($suspended): ?>
         <form method="post" action="<?= url('/hosting/' . $s['id'] . '/unsuspend') ?>" class="inline" data-confirm="Reactivate this service on the server?" data-confirm-style="primary"><?= csrf_field() ?><button class="btn primary">Unsuspend</button></form>
+      <?php endif; ?>
+      <?php if ($active && $s['provider_username']): ?>
+        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/login') ?>" class="inline" target="_blank"><?= csrf_field() ?><button class="btn ghost">Log in to panel</button></form>
       <?php endif; ?>
       <?php if ($active): ?>
         <form method="post" action="<?= url('/hosting/' . $s['id'] . '/suspend') ?>" class="inline" data-confirm="Suspend this account? Enter the reason below first." data-confirm-type="suspend" data-confirm-button="Suspend"><?= csrf_field() ?><input type="hidden" name="reason" value="Suspended by staff"><button class="btn danger">Suspend</button></form>
       <?php endif; ?>
-      <?php if ($s['provider_username']): ?>
-        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/sync') ?>" class="inline"><?= csrf_field() ?><button class="btn ghost">Sync with server</button></form>
-      <?php endif; ?>
-      <?php if (in_array($s['status'], ['active', 'suspended'], true)): ?>
-        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/renew') ?>" class="inline" data-confirm="Generate the renewal invoice now?" data-confirm-style="primary"><?= csrf_field() ?><button class="btn ghost">Invoice renewal</button></form>
-      <?php endif; ?>
+      <details class="more-actions">
+        <summary class="btn ghost">More actions ▾</summary>
+        <div class="menu">
+          <?php if ($s['provider_username']): ?>
+            <form method="post" action="<?= url('/hosting/' . $s['id'] . '/sync') ?>"><?= csrf_field() ?><button type="submit">Sync with server</button></form>
+          <?php endif; ?>
+          <?php if (in_array($s['status'], ['active', 'suspended'], true)): ?>
+            <form method="post" action="<?= url('/hosting/' . $s['id'] . '/renew') ?>" data-confirm="Generate the renewal invoice now?" data-confirm-style="primary"><?= csrf_field() ?><button type="submit">Invoice renewal</button></form>
+          <?php endif; ?>
+          <?php if ($open): ?>
+            <hr>
+            <?php if ($s['status'] !== 'cancellation_pending'): ?>
+              <form method="post" action="<?= url('/hosting/' . $s['id'] . '/cancel') ?>" data-confirm="<?= in_array($s['status'], ['active', 'suspended'], true) ? 'Cancel at the end of the paid period? The account stays up until then.' : 'Cancel this service? It was never provisioned.' ?>"><?= csrf_field() ?><button type="submit" class="danger"><?= in_array($s['status'], ['active', 'suspended'], true) ? 'Cancel at period end' : 'Cancel service' ?></button></form>
+            <?php endif; ?>
+            <?php if (Auth::isSuper()): ?>
+              <form method="post" action="<?= url('/hosting/' . $s['id'] . '/terminate') ?>" data-confirm="Permanently delete this hosting account and its data on the server? This cannot be undone." data-confirm-type="<?= e($s['domain']) ?>" data-confirm-button="Terminate"><?= csrf_field() ?><button type="submit" class="danger">Terminate…</button></form>
+            <?php endif; ?>
+          <?php endif; ?>
+        </div>
+      </details>
     </div>
 
     <?php if ($active && $altPlans): ?>
-    <form method="post" action="<?= url('/hosting/' . $s['id'] . '/change-plan') ?>" style="margin-top:14px" data-confirm="Change the plan? Upgrades create a pro-rata invoice; downgrades apply at the next renewal." data-confirm-style="primary">
-      <?= csrf_field() ?>
-      <label class="field"><span>Change plan</span>
-        <div style="display:flex;gap:8px">
-          <select name="plan_id" required style="flex:1">
-            <?php foreach ($altPlans as $p): ?><option value="<?= (int) $p['id'] ?>"><?= e($p['name']) ?></option><?php endforeach; ?>
-          </select>
-          <button class="btn ghost" type="submit">Change</button>
-        </div>
-      </label>
-    </form>
+    <details class="fold mt-14">
+      <summary>Change plan</summary>
+      <form method="post" action="<?= url('/hosting/' . $s['id'] . '/change-plan') ?>" class="inline-form mt-10" data-confirm="Change the plan? Upgrades create a pro-rata invoice; downgrades apply at the next renewal." data-confirm-style="primary">
+        <?= csrf_field() ?>
+        <select name="plan_id" required>
+          <?php foreach ($altPlans as $p): ?><option value="<?= (int) $p['id'] ?>"><?= e($p['name']) ?></option><?php endforeach; ?>
+        </select>
+        <button class="btn ghost" type="submit">Change</button>
+      </form>
+    </details>
     <?php endif; ?>
 
     <?php if (!$s['provider_username'] && $providers): ?>
-    <form method="post" action="<?= url('/hosting/' . $s['id'] . '/link') ?>" style="margin-top:14px">
-      <?= csrf_field() ?>
-      <label class="field"><span>Link an existing server account</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <select name="provider_id" required style="flex:1;min-width:150px"><option value="">Provider…</option><?php foreach ($providers as $p): ?><option value="<?= (int) $p['id'] ?>"><?= e($p['name']) ?></option><?php endforeach; ?></select>
-          <input type="text" name="username" placeholder="cPanel username" required style="flex:1;min-width:130px;padding:11px;border:1px solid var(--line);border-radius:8px">
-          <button class="btn ghost" type="submit">Link</button>
-        </div>
-        <?= field_error('username') ?>
-      </label>
-    </form>
-    <?php endif; ?>
-
-    <?php if ($open): ?>
-    <div class="actions" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px">
-      <?php if ($s['status'] !== 'cancellation_pending'): ?>
-        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/cancel') ?>" class="inline" data-confirm="<?= in_array($s['status'], ['active', 'suspended'], true) ? 'Cancel at the end of the paid period? The account stays up until then.' : 'Cancel this service? It was never provisioned.' ?>"><button class="btn ghost"><?= in_array($s['status'], ['active', 'suspended'], true) ? 'Cancel at period end' : 'Cancel service' ?></button><?= csrf_field() ?></form>
-      <?php endif; ?>
-      <?php if (Auth::isSuper()): ?>
-        <form method="post" action="<?= url('/hosting/' . $s['id'] . '/terminate') ?>" class="inline" data-confirm="Permanently delete this hosting account and its data on the server? This cannot be undone." data-confirm-type="<?= e($s['domain']) ?>" data-confirm-button="Terminate"><?= csrf_field() ?><button class="btn danger">Terminate</button></form>
-      <?php endif; ?>
-    </div>
+    <details class="fold mt-14">
+      <summary>Link an existing server account</summary>
+      <form method="post" action="<?= url('/hosting/' . $s['id'] . '/link') ?>" class="inline-form mt-10">
+        <?= csrf_field() ?>
+        <select name="provider_id" required><option value="">Provider…</option><?php foreach ($providers as $p): ?><option value="<?= (int) $p['id'] ?>"><?= e($p['name']) ?></option><?php endforeach; ?></select>
+        <input type="text" name="username" placeholder="cPanel username" required maxlength="16">
+        <button class="btn ghost" type="submit">Link</button>
+      </form>
+      <?= field_error('username') ?>
+    </details>
     <?php endif; ?>
   </div>
 
   <div class="card">
-    <div class="card-head"><h3>Edit details</h3></div>
+    <details class="fold">
+      <summary><h3 class="fold-title">Edit details</h3></summary>
+      <div class="mt-14">
     <form method="post" action="<?= url('/hosting/update/' . $s['id']) ?>">
       <?= csrf_field() ?>
       <label class="field"><span>Domain</span><input type="text" name="domain" value="<?= e($s['domain']) ?>" required maxlength="253"><?= field_error('domain') ?></label>
@@ -121,6 +124,8 @@ $open = !in_array($s['status'], ['terminated', 'cancelled'], true);
       <label class="field"><span>Notes (staff only)</span><textarea name="notes" maxlength="5000"><?= e($s['notes']) ?></textarea><?= field_error('notes') ?></label>
       <div class="form-actions"><button type="submit" class="btn primary">Save</button></div>
     </form>
+      </div>
+    </details>
   </div>
 </div>
 

@@ -14,7 +14,7 @@ $prices = fn (array $plan) => e(json_encode(array_filter([
     'actions' => '<a class="btn ghost" href="' . url('/hosting') . '">Cancel</a>',
 ], null) ?>
 
-<div class="card" style="max-width:760px">
+<div class="card card-narrow">
   <form method="post" action="<?= url('/hosting') ?>" data-plan-select>
     <?= csrf_field() ?>
     <div class="form-grid">

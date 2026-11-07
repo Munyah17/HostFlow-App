@@ -11,12 +11,12 @@
   <a href="<?= url('/settings/system') ?>" class="">System</a>
 </div>
 
-<div class="card" style="max-width:760px">
+<div class="card card-narrow">
   <form method="post" action="<?= url('/settings/' . $section) ?>">
     <?= csrf_field() ?>
     <?php foreach ($fields as [$key, $label, $type, $rule]): ?>
       <?php if ($type === 'checkbox'): ?>
-        <label class="check" style="margin-bottom:12px"><input type="checkbox" name="<?= e($key) ?>" value="1" <?= setting($key) === '1' ? 'checked' : '' ?>> <?= e($label) ?></label>
+        <label class="check mb-12"><input type="checkbox" name="<?= e($key) ?>" value="1" <?= setting($key) === '1' ? 'checked' : '' ?>> <?= e($label) ?></label>
       <?php elseif (str_starts_with((string) $type, 'select:')): ?>
         <label class="field"><span><?= e($label) ?></span>
           <select name="<?= e($key) ?>">
@@ -28,7 +28,7 @@
         </label>
       <?php elseif ($type === 'textarea'): ?>
         <label class="field"><span><?= e($label) ?></span>
-          <textarea name="<?= e($key) ?>" style="min-height:80px"><?= e(setting($key)) ?></textarea>
+          <textarea name="<?= e($key) ?>" class="ta-sm"><?= e(setting($key)) ?></textarea>
           <?= field_error($key) ?>
         </label>
       <?php elseif ($type === 'password'): ?>
@@ -47,7 +47,7 @@
   </form>
 
   <?php if ($section === 'email'): ?>
-    <h4 style="margin-top:22px">Send a test email</h4>
+    <h4 class="mt-22">Send a test email</h4>
     <form method="post" action="<?= url('/settings/email/test') ?>" class="filters">
       <?= csrf_field() ?>
       <input type="email" name="email" placeholder="you@example.com" required>

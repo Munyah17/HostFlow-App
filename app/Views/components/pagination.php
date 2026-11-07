@@ -12,7 +12,7 @@ $start = max(1, $p['page'] - 2);
 $end = min($p['pages'], $p['page'] + 2);
 ?>
 <nav class="pagination" aria-label="Pagination">
-  <span class="muted" style="border:0;background:none"><?= (int) $p['total'] ?> records</span>
+  <span class="muted plain"><?= (int) $p['total'] ?> records</span>
   <?php if ($p['page'] > 1): ?><a href="<?= e($link($p['page'] - 1)) ?>">‹ Prev</a><?php endif; ?>
   <?php for ($i = $start; $i <= $end; $i++): ?>
     <?php if ($i === $p['page']): ?><span class="current" aria-current="page"><?= $i ?></span><?php else: ?><a href="<?= e($link($i)) ?>"><?= $i ?></a><?php endif; ?>

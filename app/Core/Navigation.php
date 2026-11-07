@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Core;
 
 /**
- * Sidebar navigation, grouped into sections for staff and a flat list for clients.
+ * Sidebar navigation. Staff items are grouped into sections; clients get a flat list.
+ * 'icon' is a key into the icon() helper (inline SVG).
  */
 final class Navigation
 {
@@ -16,40 +17,50 @@ final class Navigation
     private static function core(): array
     {
         return [
-            ['label' => 'Dashboard', 'url' => '/dashboard', 'icon' => '◈', 'roles' => [self::S, self::A], 'order' => 10],
-            ['label' => 'Customers', 'url' => '/customers', 'icon' => '◉', 'roles' => [self::S, self::A], 'order' => 20],
-            ['label' => 'Web Hosting', 'url' => '/hosting', 'icon' => '▣', 'roles' => [self::S, self::A], 'order' => 30, 'exclude' => ['/hosting/plans']],
-            ['label' => 'Email Hosting', 'url' => '/email-hosting', 'icon' => '✉', 'roles' => [self::S, self::A], 'order' => 40],
-            ['label' => 'Domains', 'url' => '/domains', 'icon' => '◎', 'roles' => [self::S, self::A], 'order' => 45],
-            ['label' => 'Plans & Pricing', 'url' => '/hosting/plans', 'icon' => '▤', 'roles' => [self::S, self::A], 'order' => 50],
-            ['label' => 'Invoices', 'url' => '/billing/invoices', 'icon' => '▦', 'roles' => [self::S, self::A], 'order' => 60],
-            ['label' => 'Payments', 'url' => '/payments', 'icon' => '$', 'roles' => [self::S, self::A], 'order' => 70],
-            ['label' => 'Automation', 'url' => '/automation', 'icon' => '↻', 'roles' => [self::S, self::A], 'order' => 80],
-            ['label' => 'Support', 'url' => '/support', 'icon' => '?', 'roles' => [self::S, self::A], 'order' => 90],
-            ['label' => 'Expenses', 'url' => '/expenses', 'icon' => '−', 'roles' => [self::S, self::A], 'order' => 95],
-            ['label' => 'Reports', 'url' => '/reports', 'icon' => '▥', 'roles' => [self::S, self::A], 'order' => 100],
-            ['label' => 'Integrations', 'url' => '/integrations', 'icon' => '⇄', 'roles' => [self::S], 'order' => 110],
-            ['label' => 'Administrators', 'url' => '/staff', 'icon' => '☺', 'roles' => [self::S], 'order' => 120],
-            ['label' => 'Activity Log', 'url' => '/activity-log', 'icon' => '≡', 'roles' => [self::S], 'order' => 130],
-            ['label' => 'Settings', 'url' => '/settings', 'icon' => '⚙', 'roles' => [self::S], 'order' => 140],
+            // Staff — Manage
+            ['label' => 'Dashboard', 'url' => '/dashboard', 'icon' => 'dashboard', 'section' => 'Manage', 'roles' => [self::S, self::A], 'order' => 10],
+            ['label' => 'Customers', 'url' => '/customers', 'icon' => 'customers', 'section' => 'Manage', 'roles' => [self::S, self::A], 'order' => 20],
+            ['label' => 'Support', 'url' => '/support', 'icon' => 'support', 'section' => 'Manage', 'roles' => [self::S, self::A], 'order' => 90],
+            // Staff — Services
+            ['label' => 'Web Hosting', 'url' => '/hosting', 'icon' => 'hosting', 'section' => 'Services', 'roles' => [self::S, self::A], 'order' => 30, 'exclude' => ['/hosting/plans']],
+            ['label' => 'Email Hosting', 'url' => '/email-hosting', 'icon' => 'email', 'section' => 'Services', 'roles' => [self::S, self::A], 'order' => 40],
+            ['label' => 'Domains', 'url' => '/domains', 'icon' => 'domains', 'section' => 'Services', 'roles' => [self::S, self::A], 'order' => 45],
+            ['label' => 'Plans & Pricing', 'url' => '/hosting/plans', 'icon' => 'plans', 'section' => 'Services', 'roles' => [self::S, self::A], 'order' => 50],
+            // Staff — Billing
+            ['label' => 'Invoices', 'url' => '/billing/invoices', 'icon' => 'invoices', 'section' => 'Billing', 'roles' => [self::S, self::A], 'order' => 60],
+            ['label' => 'Payments', 'url' => '/payments', 'icon' => 'payments', 'section' => 'Billing', 'roles' => [self::S, self::A], 'order' => 70],
+            ['label' => 'Expenses', 'url' => '/expenses', 'icon' => 'expenses', 'section' => 'Billing', 'roles' => [self::S, self::A], 'order' => 95],
+            ['label' => 'Reports', 'url' => '/reports', 'icon' => 'reports', 'section' => 'Billing', 'roles' => [self::S, self::A], 'order' => 100],
+            // Staff — System
+            ['label' => 'Automation', 'url' => '/automation', 'icon' => 'automation', 'section' => 'System', 'roles' => [self::S, self::A], 'order' => 80],
+            ['label' => 'Integrations', 'url' => '/integrations', 'icon' => 'integrations', 'section' => 'System', 'roles' => [self::S], 'order' => 110],
+            ['label' => 'Administrators', 'url' => '/staff', 'icon' => 'staff', 'section' => 'System', 'roles' => [self::S], 'order' => 120],
+            ['label' => 'Activity Log', 'url' => '/activity-log', 'icon' => 'audit', 'section' => 'System', 'roles' => [self::S], 'order' => 130],
+            ['label' => 'Settings', 'url' => '/settings', 'icon' => 'settings', 'section' => 'System', 'roles' => [self::S], 'order' => 140],
 
-            ['label' => 'Dashboard', 'url' => '/client', 'icon' => '◈', 'roles' => [self::C], 'order' => 10, 'exact' => true],
-            ['label' => 'My Services', 'url' => '/client/services', 'icon' => '▣', 'roles' => [self::C], 'order' => 20],
-            ['label' => 'Email Hosting', 'url' => '/client/email', 'icon' => '✉', 'roles' => [self::C], 'order' => 30],
-            ['label' => 'My Domains', 'url' => '/client/domains', 'icon' => '◎', 'roles' => [self::C], 'order' => 32],
-            ['label' => 'Order Hosting', 'url' => '/client/order', 'icon' => '+', 'roles' => [self::C], 'order' => 35],
-            ['label' => 'My Invoices', 'url' => '/client/invoices', 'icon' => '▦', 'roles' => [self::C], 'order' => 40],
-            ['label' => 'Payments', 'url' => '/client/payments', 'icon' => '$', 'roles' => [self::C], 'order' => 50],
-            ['label' => 'Support', 'url' => '/client/support', 'icon' => '?', 'roles' => [self::C], 'order' => 60],
-            ['label' => 'My Profile', 'url' => '/client/profile', 'icon' => '☺', 'roles' => [self::C], 'order' => 70],
+            // Client portal (flat)
+            ['label' => 'Dashboard', 'url' => '/client', 'icon' => 'dashboard', 'roles' => [self::C], 'order' => 10, 'exact' => true],
+            ['label' => 'My Services', 'url' => '/client/services', 'icon' => 'hosting', 'roles' => [self::C], 'order' => 20],
+            ['label' => 'Email Hosting', 'url' => '/client/email', 'icon' => 'email', 'roles' => [self::C], 'order' => 30],
+            ['label' => 'My Domains', 'url' => '/client/domains', 'icon' => 'domains', 'roles' => [self::C], 'order' => 32],
+            ['label' => 'Order Hosting', 'url' => '/client/order', 'icon' => 'order', 'roles' => [self::C], 'order' => 35],
+            ['label' => 'My Invoices', 'url' => '/client/invoices', 'icon' => 'invoices', 'roles' => [self::C], 'order' => 40],
+            ['label' => 'Payments', 'url' => '/client/payments', 'icon' => 'payments', 'roles' => [self::C], 'order' => 50],
+            ['label' => 'Support', 'url' => '/client/support', 'icon' => 'support', 'roles' => [self::C], 'order' => 60],
+            ['label' => 'My Profile', 'url' => '/client/profile', 'icon' => 'profile', 'roles' => [self::C], 'order' => 70],
         ];
     }
 
-    /** Items visible to a role, ordered. Each item may carry a 'section' label rendered as a group header. */
+    /** Items visible to a role, ordered by section (ranked by its first item) then order. */
     public static function forRole(?string $role): array
     {
         $items = array_values(array_filter(self::core(), fn ($i) => in_array($role, $i['roles'], true)));
-        usort($items, fn ($a, $b) => ($a['order'] <=> $b['order']) ?: strcmp($a['label'], $b['label']));
+        $sectionRank = [];
+        foreach ($items as $i) {
+            $s = (string) ($i['section'] ?? '');
+            $sectionRank[$s] = min($sectionRank[$s] ?? PHP_INT_MAX, $i['order']);
+        }
+        usort($items, fn ($a, $b) => ($sectionRank[(string) ($a['section'] ?? '')] <=> $sectionRank[(string) ($b['section'] ?? '')]) ?: ($a['order'] <=> $b['order']));
         return $items;
     }
 

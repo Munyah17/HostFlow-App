@@ -31,14 +31,14 @@ $actions = '<form method="post" action="' . url('/integrations/providers/' . $pr
         <td><?= $l ? '<a href="' . url('/hosting/view/' . $l['id']) . '">' . e($l['domain']) . '</a> ' . badge($l['status']) : badge('muted', 'Unmanaged') ?></td>
         <td class="text-right">
           <?php if (!$l && $plans): ?>
-          <form method="post" action="<?= url('/integrations/providers/' . $provider['id'] . '/import') ?>" class="inline" style="display:flex;gap:6px;justify-content:flex-end">
+          <form method="post" action="<?= url('/integrations/providers/' . $provider['id'] . '/import') ?>" class="row-form">
             <?= csrf_field() ?>
             <input type="hidden" name="username" value="<?= e($a['username']) ?>">
-            <select name="customer_id" required style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px;max-width:170px">
+            <select name="customer_id" required class="compact-select">
               <option value="">Customer…</option>
               <?php foreach ($customers as $c): ?><option value="<?= (int) $c['id'] ?>"><?= e($c['business_name'] ?: $c['full_name']) ?></option><?php endforeach; ?>
             </select>
-            <select name="plan_id" required style="padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px;max-width:140px">
+            <select name="plan_id" required class="compact-select">
               <option value="">Plan…</option>
               <?php foreach ($plans as $pl): ?><option value="<?= (int) $pl['id'] ?>"><?= e($pl['name']) ?></option><?php endforeach; ?>
             </select>

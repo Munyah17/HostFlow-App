@@ -23,7 +23,7 @@ $actions .= '<a class="btn ghost" href="' . url($s['type'] === 'email' ? '/clien
 <?php endif; ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($s['status']) ?></strong><small><?= $s['activation_date'] ? 'Since ' . date_fmt($s['activation_date']) : 'Not activated' ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($s['status']) ?></strong><small><?= $s['activation_date'] ? 'Since ' . date_fmt($s['activation_date']) : 'Not activated' ?></small></div>
   <div class="stat"><span>Billing</span><strong><?= money($s['price']) ?></strong><small><?= e(cycle_label($s['billing_cycle'])) ?> · next due <?= date_fmt($s['next_due_date']) ?></small></div>
   <div class="stat"><span>Disk usage</span><strong><?= $s['disk_used_mb'] !== null ? e(number_format((float) $s['disk_used_mb'], 0)) . ' MB' : '—' ?></strong><small><?= $s['disk_limit_mb'] !== null ? 'of ' . e(number_format((float) $s['disk_limit_mb'], 0)) . ' MB' : '' ?></small></div>
 </div>
@@ -41,15 +41,15 @@ $actions .= '<a class="btn ghost" href="' . url($s['type'] === 'email' ? '/clien
     </div>
 
     <?php if ($active && $altPlans): ?>
-    <form method="post" action="<?= url('/client/services/' . $s['id'] . '/change-plan') ?>" style="margin-top:14px" data-confirm="Change plan? Upgrades are charged pro-rata and take effect after payment." data-confirm-style="primary">
+    <form method="post" action="<?= url('/client/services/' . $s['id'] . '/change-plan') ?>" class="mt-14" data-confirm="Change plan? Upgrades are charged pro-rata and take effect after payment." data-confirm-style="primary">
       <?= csrf_field() ?>
       <label class="field"><span>Upgrade / downgrade plan</span>
-        <div style="display:flex;gap:8px">
-          <select name="plan_id" required style="flex:1">
+        <span class="inline-form">
+          <select name="plan_id" required>
             <?php foreach ($altPlans as $p): ?><option value="<?= (int) $p['id'] ?>"><?= e($p['name']) ?><?= $p['price_monthly'] !== null ? ' — ' . money($p['price_monthly']) . '/mo' : '' ?></option><?php endforeach; ?>
           </select>
           <button class="btn ghost" type="submit">Change</button>
-        </div>
+        </span>
       </label>
     </form>
     <?php endif; ?>

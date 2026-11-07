@@ -10,7 +10,7 @@ $open = in_array($invoice['status'], ['draft', 'pending', 'overdue'], true);
 ], null) ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($invoice['status']) ?></strong><small><?= $invoice['paid_at'] ? 'Paid ' . datetime_fmt($invoice['paid_at']) : 'Due ' . date_fmt($invoice['due_date']) ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($invoice['status']) ?></strong><small><?= $invoice['paid_at'] ? 'Paid ' . datetime_fmt($invoice['paid_at']) : 'Due ' . date_fmt($invoice['due_date']) ?></small></div>
   <div class="stat"><span>Total</span><strong><?= money($invoice['total'], $invoice['currency']) ?></strong><small><?= money($invoice['amount_paid'], $invoice['currency']) ?> received</small></div>
   <div class="stat"><span>Balance due</span><strong><?= money($balance, $invoice['currency']) ?></strong><small><?= $payable ? 'Awaiting payment' : 'Nothing owing' ?></small></div>
 </div>
@@ -38,7 +38,7 @@ $open = in_array($invoice['status'], ['draft', 'pending', 'overdue'], true);
       <div><span>Paid</span><span><?= money($invoice['amount_paid'], $invoice['currency']) ?></span></div>
       <div class="grand"><span>Balance</span><span><?= money($balance, $invoice['currency']) ?></span></div>
     </div>
-    <?php if ($invoice['notes']): ?><h4>Notes</h4><p class="small" style="white-space:pre-wrap"><?= e($invoice['notes']) ?></p><?php endif; ?>
+    <?php if ($invoice['notes']): ?><h4>Notes</h4><p class="small prewrap"><?= e($invoice['notes']) ?></p><?php endif; ?>
   </div>
 
   <div class="card">
@@ -60,16 +60,17 @@ $open = in_array($invoice['status'], ['draft', 'pending', 'overdue'], true);
     </div>
 
     <?php if (in_array($invoice['status'], ['pending', 'overdue'], true)): ?>
-    <form method="post" action="<?= url('/billing/invoices/' . $invoice['id'] . '/due-date') ?>" style="margin-top:14px">
+    <form method="post" action="<?= url('/billing/invoices/' . $invoice['id'] . '/due-date') ?>" class="mt-14">
       <?= csrf_field() ?>
       <label class="field"><span>Change due date</span>
-        <div style="display:flex;gap:8px"><input type="date" name="due_date" value="<?= e($invoice['due_date']) ?>" required style="flex:1"><button class="btn ghost" type="submit">Save</button></div>
+        <span class="inline-form"><input type="date" name="due_date" value="<?= e($invoice['due_date']) ?>" required><button class="btn ghost" type="submit">Save</button></span>
         <?= field_error('due_date') ?>
       </label>
     </form>
     <?php endif; ?>
 
     <?php if ($payable): ?>
+    <div class="card-section">
     <h4>Record a manual payment</h4>
     <form method="post" action="<?= url('/payments/manual') ?>">
       <?= csrf_field() ?>
@@ -83,8 +84,9 @@ $open = in_array($invoice['status'], ['draft', 'pending', 'overdue'], true);
         <label class="field"><span>Payment date *</span><input type="date" name="paid_at" value="<?= e(today()) ?>" required></label>
       </div>
       <label class="field"><span>Note</span><input type="text" name="note" maxlength="500"></label>
-      <div class="form-actions"><button type="submit" class="btn primary">Record payment</button></div>
+      <div class="form-actions"><button type="submit" class="btn primary">Record payment</button><a class="btn ghost" href="<?= url('/payments') ?>">All payments</a></div>
     </form>
+    </div>
     <?php endif; ?>
   </div>
 </div>

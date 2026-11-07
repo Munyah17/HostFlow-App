@@ -35,7 +35,7 @@ $businessName = hostflow_installed() && \App\Core\Database::isConnected() ? sett
   <nav>
     <a href="<?= url('/') ?>#plans">Hosting</a>
     <a href="<?= url('/login') ?>">Client sign in</a>
-    <a class="btn primary small" href="<?= url('/register') ?>" style="color:#fff">Create account</a>
+    <a class="btn primary small" href="<?= url('/register') ?>" >Create account</a>
   </nav>
 </header>
 <main class="public-main">

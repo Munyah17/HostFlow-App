@@ -15,7 +15,7 @@ $min = max(8, (int) setting('min_password_length', 10));
     <div class="card-head"><h3>Order <?= e($plan['name']) ?></h3><span class="muted small"><?= $plan['type'] === 'email' ? 'Email hosting' : 'Web hosting' ?></span></div>
     <form method="post" action="<?= url('/order/' . (int) $plan['id']) ?>">
       <?= csrf_field() ?>
-      <h4 style="margin:0 0 10px">Hosting details</h4>
+      <h4 class="h4-sub">Hosting details</h4>
       <label class="field"><span>Domain *</span><input type="text" name="domain" value="<?= e(old('domain')) ?>" required placeholder="yourdomain.co.zw" maxlength="253"><?= field_error('domain') ?><span class="help">The domain your hosting will be attached to.</span></label>
       <label class="field"><span>Billing cycle *</span>
         <select name="billing_cycle" required>
@@ -25,7 +25,7 @@ $min = max(8, (int) setting('min_password_length', 10));
       </label>
       <?php if ((float) $plan['setup_fee'] > 0): ?><p class="small muted">One-time setup fee: <?= money($plan['setup_fee']) ?></p><?php endif; ?>
 
-      <h4 style="margin:18px 0 10px">Your account</h4>
+      <h4 class="section-title">Your account</h4>
       <div class="form-grid">
         <label class="field"><span>Full name *</span><input type="text" name="full_name" value="<?= e(old('full_name')) ?>" required maxlength="150"><?= field_error('full_name') ?></label>
         <label class="field"><span>Business name</span><input type="text" name="business_name" value="<?= e(old('business_name')) ?>" maxlength="150"></label>
@@ -45,9 +45,9 @@ $min = max(8, (int) setting('min_password_length', 10));
 
   <div class="card">
     <div class="card-head"><h3>Your plan</h3></div>
-    <div class="plan" style="border:0;padding:0">
-      <div class="plan-top"><div><h4 style="margin:0"><?= e($plan['name']) ?></h4></div></div>
-      <?php if ($plan['description']): ?><p class="small muted" style="margin:8px 0"><?= e($plan['description']) ?></p><?php endif; ?>
+    <div class="plan flat">
+      <div class="plan-top"><div><h4><?= e($plan['name']) ?></h4></div></div>
+      <?php if ($plan['description']): ?><p class="small muted my-8"><?= e($plan['description']) ?></p><?php endif; ?>
       <ul>
         <?php if ($plan['storage_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $plan['storage_gb'], 2), '0'), '.')) ?> GB storage</li><?php endif; ?>
         <?php if ($plan['bandwidth_gb'] !== null): ?><li><?= e(rtrim(rtrim(number_format((float) $plan['bandwidth_gb'], 2), '0'), '.')) ?> GB bandwidth</li><?php endif; ?>
@@ -55,12 +55,12 @@ $min = max(8, (int) setting('min_password_length', 10));
         <?php foreach (array_slice(array_filter(array_map('trim', explode("\n", (string) $plan['features']))), 0, 6) as $feat): ?><li><?= e($feat) ?></li><?php endforeach; ?>
       </ul>
     </div>
-    <h4 style="margin:18px 0 8px">What happens next</h4>
-    <ul class="small" style="margin:0;padding-left:18px;color:var(--muted)">
+    <h4 class="section-title">What happens next</h4>
+    <ul class="small muted-list">
       <li>Your account and invoice are created instantly.</li>
       <li>Pay online — your cPanel account is activated automatically.</li>
       <li>Login details and your receipt arrive by email.</li>
     </ul>
-    <p class="small" style="margin-top:16px">Already a customer? <a href="<?= url('/login') ?>">Sign in</a> and order from your client area.</p>
+    <p class="small mt-16">Already a customer? <a href="<?= url('/login') ?>">Sign in</a> and order from your client area.</p>
   </div>
 </div>

@@ -22,9 +22,9 @@
     </table></div>
 
     <?php foreach ($staff as $u): ?>
-    <details style="border-top:1px solid var(--line);padding:10px 0">
-      <summary class="small" style="cursor:pointer">Manage <b><?= e($u['name']) ?></b></summary>
-      <form method="post" action="<?= url('/staff/' . $u['id'] . '/update') ?>" class="filters" style="margin-top:10px">
+    <details class="fold staff-edit">
+      <summary>Manage <b><?= e($u['name']) ?></b></summary>
+      <form method="post" action="<?= url('/staff/' . $u['id'] . '/update') ?>" class="filters mt-10">
         <?= csrf_field() ?>
         <select name="role">
           <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
@@ -34,8 +34,8 @@
           <option value="active" <?= $u['status'] === 'active' ? 'selected' : '' ?>>Active</option>
           <option value="disabled" <?= $u['status'] === 'disabled' ? 'selected' : '' ?>>Disabled</option>
         </select>
-        <input type="password" name="password" placeholder="New password (optional)" autocomplete="new-password" style="min-width:170px">
-        <input type="password" name="password_confirmation" placeholder="Repeat password" autocomplete="new-password" style="min-width:170px">
+        <input type="password" name="password" placeholder="New password (optional)" autocomplete="new-password" class="pw-input">
+        <input type="password" name="password_confirmation" placeholder="Repeat password" autocomplete="new-password" class="pw-input">
         <button class="btn ghost small" type="submit">Save</button>
       </form>
     </details>

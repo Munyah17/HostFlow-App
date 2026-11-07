@@ -5,12 +5,12 @@ $closed = in_array($d['status'], ['transferred_away', 'cancelled'], true);
 ?>
 <?= view('components.heading', [
     'title' => $d['domain'],
-    'subtitle' => ($d['business_name'] ?: $d['full_name']) . ' · ' . e(status_label($d['status'])),
+    'subtitle' => ($d['business_name'] ?: $d['full_name']) . ' · ' . status_label($d['status']),
     'actions' => '<a class="btn ghost" href="' . url('/customers/view/' . $d['customer_id']) . '">Customer</a><a class="btn ghost" href="' . url('/domains') . '">All domains</a>',
 ], null) ?>
 
 <div class="stats three">
-  <div class="stat"><span>Status</span><strong style="font-size:18px"><?= badge($d['status']) ?></strong><small><?= $d['registrar'] ?: 'Registrar not recorded' ?></small></div>
+  <div class="stat"><span>Status</span><strong class="stat-badge"><?= badge($d['status']) ?></strong><small><?= $d['registrar'] ?: 'Registrar not recorded' ?></small></div>
   <div class="stat"><span>Registered</span><strong><?= date_fmt($d['registered_at']) ?></strong><small><?= $d['registrar_reference'] ? 'Ref ' . e($d['registrar_reference']) : '' ?></small></div>
   <div class="stat"><span>Expiry</span><strong><?= date_fmt($d['expiry_date']) ?></strong><small><?= $d['auto_renew'] ? 'Auto-renew invoicing on' : 'Auto-renew off' ?></small></div>
 </div>
@@ -30,7 +30,7 @@ $closed = in_array($d['status'], ['transferred_away', 'cancelled'], true);
       <div><dt>Nameservers</dt><dd><?= $d['nameservers'] ? e($d['nameservers']) : '—' ?></dd></div>
       <div><dt>Renewal price</dt><dd><?= $d['renewal_price'] > 0 ? money($d['renewal_price']) . ' <small class="muted">/ year</small>' : '—' ?></dd></div>
     </dl>
-    <?php if ($d['notes']): ?><h4>Staff notes</h4><p class="small" style="white-space:pre-wrap"><?= e($d['notes']) ?></p><?php endif; ?>
+    <?php if ($d['notes']): ?><h4>Staff notes</h4><p class="small prewrap"><?= e($d['notes']) ?></p><?php endif; ?>
 
     <?php if (!$closed): ?>
     <h4>Actions</h4>
@@ -43,7 +43,7 @@ $closed = in_array($d['status'], ['transferred_away', 'cancelled'], true);
     </div>
 
     <?php if ($pending): ?>
-    <form method="post" action="<?= url('/domains/' . $d['id'] . '/register') ?>" style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px" data-confirm="Mark this domain as registered at the registrar?" data-confirm-style="primary">
+    <form method="post" action="<?= url('/domains/' . $d['id'] . '/register') ?>" class="action-section" data-confirm="Mark this domain as registered at the registrar?" data-confirm-style="primary">
       <?= csrf_field() ?>
       <h4>Mark as registered</h4>
       <div class="form-grid">

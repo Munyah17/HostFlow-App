@@ -4,6 +4,14 @@
     'actions' => '<a class="btn primary" href="' . url('/client/order') . '">+ Order hosting</a>',
 ], null) ?>
 
+<?php if ($services): ?>
+<div class="stats three">
+  <div class="stat"><span>Active</span><strong><?= (int) $stats['active'] ?></strong><small>Running services</small></div>
+  <div class="stat"><span>Suspended</span><strong><?= (int) $stats['suspended'] ?></strong><small>On hold</small></div>
+  <div class="stat"><span>In progress</span><strong><?= (int) $stats['pending'] ?></strong><small>Orders &amp; provisioning</small></div>
+</div>
+<?php endif; ?>
+
 <div class="card">
   <?php if (!$services): ?>
     <div class="empty">No <?= $type === 'email' ? 'email hosting' : 'services' ?> yet. <a href="<?= url('/client/order') ?>">Order hosting</a>.</div>

@@ -17,11 +17,26 @@ final class InvoiceController extends Controller
 {
     public function index(): string
     {
-        $invoices = db()->fetchAll("SELECT * FROM invoices WHERE customer_id = ? AND status <> 'draft' ORDER BY id DESC LIMIT 200", [Auth::customerId()]);
+        $status = (string) Request::query('status', '');
+        $where = ['customer_id = ?', "status <> 'draft'"];
+        $params = [Auth::customerId()];
+        if (in_array($status, ['pending', 'overdue', 'paid', 'cancelled'], true)) {
+            $where[] = 'status = ?';
+            $params[] = $status;
+        }
+        $invoices = db()->fetchAll('SELECT * FROM invoices WHERE ' . implode(' AND ', $where) . ' ORDER BY id DESC LIMIT 200', $params);
+        $stats = db()->fetch(
+            "SELECT COALESCE(SUM(CASE WHEN status IN ('pending','overdue') THEN total - amount_paid END),0) AS balance,
+                    SUM(status = 'overdue') AS overdue_count,
+                    COALESCE(SUM(CASE WHEN status = 'paid' AND paid_at >= DATE_FORMAT(CURDATE(), '%Y-%m-01') THEN total END),0) AS paid_month
+             FROM invoices WHERE customer_id = ? AND status <> 'draft'",
+            [Auth::customerId()]
+        );
         return $this->view('client.invoices.index', [
             'title' => 'My invoices',
             'invoices' => $invoices,
-            'balance' => InvoiceService::customerBalance(Auth::customerId()),
+            'stats' => $stats,
+            'status' => $status,
         ]);
     }
 
