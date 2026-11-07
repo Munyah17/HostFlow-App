@@ -17,7 +17,6 @@ final class SystemController extends Controller
             'version' => app_version(),
             'lastVersion' => UpdateService::lastVersion(),
             'pending' => UpdateService::pending(),
-            'incompatible' => UpdateService::incompatiblePlugins(),
             'history' => db()->fetchAll('SELECT * FROM update_history ORDER BY id DESC LIMIT 20'),
             'backups' => BackupService::list(),
             'php' => PHP_VERSION,

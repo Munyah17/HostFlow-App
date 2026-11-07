@@ -29,14 +29,6 @@ final class GatewayRegistry
         return self::all()[$id] ?? null;
     }
 
-    public static function register(PaymentGatewayInterface $gateway): void
-    {
-        if (in_array($gateway->id(), ['paynow', 'stripe', 'manual'], true) || !preg_match('/^[a-z0-9_]{2,40}$/', $gateway->id())) {
-            throw new \InvalidArgumentException('Invalid or reserved gateway id: ' . $gateway->id());
-        }
-        self::$gateways[$gateway->id()] = $gateway;
-    }
-
     /** Test hook. */
     public static function set(string $id, PaymentGatewayInterface $gateway): void
     {

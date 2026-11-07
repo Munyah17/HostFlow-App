@@ -6,7 +6,6 @@
 /storage/cache/*
 /storage/uploads/*
 /storage/backups/*
-/storage/plugins/*
 /storage/tmp/*
 /storage/installed.lock
 !/storage/**/.gitkeep

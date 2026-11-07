@@ -12,7 +12,7 @@ namespace App\Core;
  *   - *.php : must return callable(Database $db): void
  *
  * Applied migrations are recorded in the `migrations` table with a scope
- * ("core" or "plugin:<id>") so they are never re-run.
+ * ("core") so they are never re-run.
  */
 final class Migrator
 {

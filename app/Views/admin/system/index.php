@@ -10,10 +10,6 @@
   <div class="stat"><span>Backups</span><strong><?= count($backups) ?></strong><small>Kept in storage/backups</small></div>
 </div>
 
-<?php foreach ($incompatible as $pid => $min): ?>
-  <div class="alert warning"><b>Plugin '<?= e($pid) ?>'</b> requires HostFlow <?= e($min) ?> or newer and is not running.</div>
-<?php endforeach; ?>
-
 <div class="columns">
   <div class="card">
     <div class="card-head"><h3>Database migrations</h3></div>

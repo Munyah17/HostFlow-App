@@ -19,7 +19,7 @@ final class AuditController extends Controller
             $where[] = '(a.action LIKE ? OR u.name LIKE ? OR a.details LIKE ?)';
             array_push($params, ...array_fill(0, 3, '%' . $q . '%'));
         }
-        if (in_array($entity, ['customer', 'service', 'invoice', 'ticket', 'plan', 'provider', 'user', 'plugin', 'system', 'cron_run'], true)) {
+        if (in_array($entity, ['customer', 'service', 'invoice', 'ticket', 'plan', 'provider', 'user', 'system', 'cron_run'], true)) {
             $where[] = 'a.entity_type = ?';
             $params[] = $entity;
         }

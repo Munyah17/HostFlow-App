@@ -4,17 +4,12 @@ declare(strict_types=1);
 
 namespace App\Core;
 
-use App\Plugins\PluginManager;
-
 final class App
 {
     public static function router(): Router
     {
         $router = new Router();
         (require BASE_PATH . '/app/routes.php')($router);
-        if (hostflow_installed()) {
-            PluginManager::instance()->registerRoutes($router);
-        }
         return $router;
     }
 
@@ -27,9 +22,6 @@ final class App
             $installing = $path === '/install' || str_starts_with($path, '/install/');
             if (!hostflow_installed() && !$installing && !str_starts_with($path, '/assets/')) {
                 redirect('/install');
-            }
-            if (hostflow_installed()) {
-                PluginManager::instance()->boot();
             }
             $result = self::router()->dispatch(Request::method(), $path);
             if (is_string($result)) {

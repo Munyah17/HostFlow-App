@@ -79,16 +79,4 @@ final class UpdateService
             // update_history may not exist if the very first migration failed
         }
     }
-
-    /** Plugins whose minimum HostFlow version is newer than the running core. */
-    public static function incompatiblePlugins(): array
-    {
-        $out = [];
-        foreach (\App\Plugins\PluginManager::instance()->discover() as $id => $p) {
-            if ($p['record'] && $p['manifest'] && !$p['compatible']) {
-                $out[$id] = $p['manifest']['minimum_hostflow_version'];
-            }
-        }
-        return $out;
-    }
 }

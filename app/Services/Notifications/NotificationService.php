@@ -46,19 +46,6 @@ final class NotificationService
         return self::$channels;
     }
 
-    public static function registerChannel(NotificationChannelInterface $channel): void
-    {
-        if ($channel->id() === 'email') {
-            throw new \InvalidArgumentException('The email channel is provided by HostFlow core.');
-        }
-        self::$channels[$channel->id()] = $channel;
-    }
-
-    public static function resetChannels(): void
-    {
-        self::$channels = [];
-    }
-
     /**
      * Queue a notification for a customer on all enabled channels.
      * Returns number of queued messages (0 if duplicate).

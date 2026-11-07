@@ -332,20 +332,6 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     CONSTRAINT fk_audit_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS plugins (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    plugin_id VARCHAR(64) NOT NULL,
-    name VARCHAR(150) NOT NULL,
-    version VARCHAR(20) NOT NULL,
-    source ENUM('bundled','uploaded') NOT NULL DEFAULT 'uploaded',
-    status ENUM('installed','enabled','disabled','error') NOT NULL DEFAULT 'installed',
-    last_error VARCHAR(1000) NULL,
-    installed_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
-    enabled_at DATETIME NULL,
-    UNIQUE KEY uq_plugins_plugin_id (plugin_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS update_history (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     from_version VARCHAR(20) NULL,

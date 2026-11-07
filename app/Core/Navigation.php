@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Core;
 
 /**
- * Sidebar navigation. Core items are defined here; plugins add items through
- * Navigation::register() (only while enabled). Plugins never edit sidebar HTML.
+ * Sidebar navigation, grouped into sections for staff and a flat list for clients.
  */
 final class Navigation
 {
-    private static array $pluginItems = [];
-
     private const S = Auth::SUPER_ADMIN;
     private const A = Auth::ADMIN;
     private const C = Auth::CLIENT;
@@ -48,45 +45,11 @@ final class Navigation
         ];
     }
 
-    /**
-     * Register a plugin navigation item.
-     * $item = ['label' => 'Domains', 'url' => '/admin/plugins/x', 'roles' => ['super_admin'], 'icon' => '◇', 'order' => 55]
-     */
-    public static function register(string $pluginId, array $item): void
-    {
-        if (empty($item['label']) || empty($item['url']) || empty($item['roles'])) {
-            throw new \InvalidArgumentException("Plugin {$pluginId}: navigation items require label, url and roles.");
-        }
-        $roles = array_values(array_intersect((array) $item['roles'], array_keys(Auth::ROLE_LABELS)));
-        self::$pluginItems[] = [
-            'label' => (string) $item['label'],
-            'url' => '/' . ltrim((string) $item['url'], '/'),
-            'icon' => (string) ($item['icon'] ?? '◇'),
-            'roles' => $roles,
-            'order' => (int) ($item['order'] ?? 135),
-            'plugin' => $pluginId,
-        ];
-    }
-
-    public static function reset(): void
-    {
-        self::$pluginItems = [];
-    }
-
-    public static function snapshot(): array
-    {
-        return self::$pluginItems;
-    }
-
-    public static function restore(array $items): void
-    {
-        self::$pluginItems = $items;
-    }
-
+    /** Items visible to a role, ordered. Each item may carry a 'section' label rendered as a group header. */
     public static function forRole(?string $role): array
     {
-        $items = array_filter(array_merge(self::core(), self::$pluginItems), fn ($i) => in_array($role, $i['roles'], true));
-        usort($items, fn ($a, $b) => $a['order'] <=> $b['order']);
+        $items = array_values(array_filter(self::core(), fn ($i) => in_array($role, $i['roles'], true)));
+        usort($items, fn ($a, $b) => ($a['order'] <=> $b['order']) ?: strcmp($a['label'], $b['label']));
         return $items;
     }
 

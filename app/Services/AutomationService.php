@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Logger;
-use App\Plugins\PluginManager;
 use App\Services\Notifications\NotificationService;
 use App\Services\Payments\GatewayRegistry;
 
@@ -33,7 +32,6 @@ final class AutomationService
         'reactivate_paid' => 'Reactivate paid services',
         'reconcile_payments' => 'Verify pending online payments',
         'sync_hosting' => 'Synchronise hosting accounts',
-        'plugin_tasks' => 'Plugin scheduled tasks',
         'send_notifications' => 'Send queued notifications',
         'cleanup' => 'Housekeeping',
     ];
@@ -395,22 +393,6 @@ final class AutomationService
             }
         }
         return $out ? implode('; ', $out) : 'not due';
-    }
-
-    private function pluginTasks(): array
-    {
-        $results = [];
-        foreach (PluginManager::instance()->scheduledTasks() as $key => $task) {
-            try {
-                ($task['callback'])();
-                $results[$key] = 'ok';
-            } catch (\Throwable $e) {
-                $this->fail();
-                $results[$key] = 'error';
-                AutomationLog::record('plugin:' . $task['plugin'], $task['name'], 'failed', $e->getMessage());
-            }
-        }
-        return $results;
     }
 
     private function sendNotifications(): string

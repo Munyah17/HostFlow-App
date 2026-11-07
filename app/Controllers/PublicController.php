@@ -8,7 +8,6 @@ use App\Core\Auth;
 use App\Core\Database;
 use App\Core\Logger;
 use App\Core\Request;
-use App\Plugins\PluginManager;
 use App\Services\AutomationService;
 use App\Services\BillingCycle;
 use App\Services\BillingService;
@@ -187,30 +186,8 @@ final class PublicController extends Controller
             abort(404);
         }
         @set_time_limit(300);
-        PluginManager::instance()->boot();
         $result = AutomationService::run();
         header('Content-Type: text/plain');
         return $result === null ? "Another automation run is in progress.\n" : 'Run #' . $result['run_id'] . ': ' . $result['status'] . "\n";
-    }
-
-    /** Serve static assets from an ENABLED plugin's assets/ directory. */
-    public function pluginAsset(string $plugin, string $file): never
-    {
-        $record = db()->fetch("SELECT * FROM plugins WHERE plugin_id = ? AND status = 'enabled'", [$plugin]);
-        $info = $record ? PluginManager::instance()->find($plugin) : null;
-        $types = ['css' => 'text/css', 'js' => 'application/javascript', 'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'gif' => 'image/gif', 'svg' => 'image/svg+xml', 'webp' => 'image/webp', 'woff2' => 'font/woff2', 'woff' => 'font/woff'];
-        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        if (!$info || !$info['path'] || !isset($types[$ext]) || !preg_match('/^[A-Za-z0-9._-]+$/', $file)) {
-            abort(404);
-        }
-        $base = realpath($info['path'] . '/assets');
-        $path = $base ? realpath($base . '/' . $file) : false;
-        if (!$path || !str_starts_with($path, $base . DIRECTORY_SEPARATOR) || !is_file($path)) {
-            abort(404);
-        }
-        header('Content-Type: ' . $types[$ext]);
-        header('Cache-Control: public, max-age=86400');
-        readfile($path);
-        exit;
     }
 }

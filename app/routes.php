@@ -21,7 +21,6 @@ return function (Router $r): void {
     $r->post('/webhooks/paynow', [PublicController::class, 'paynowWebhook'], ['nocsrf']);
     $r->post('/webhooks/gateway/{gateway}', [PublicController::class, 'gatewayWebhook'], ['nocsrf']);
     $r->get('/cron/run', [PublicController::class, 'webCron']);
-    $r->get('/plugin-assets/{plugin}/{file}', [PublicController::class, 'pluginAsset']);
 
     // Authentication
     $r->group(['middleware' => ['guest']], function (Router $r) {
@@ -138,11 +137,6 @@ return function (Router $r): void {
         $r->get('/activity-log', [Admin\AuditController::class, 'index']);
 
         $r->get('/settings', [Admin\SettingsController::class, 'index']);
-        $r->get('/settings/plugins', [Admin\PluginController::class, 'index']);
-        $r->post('/settings/plugins/upload', [Admin\PluginController::class, 'upload']);
-        $r->get('/settings/plugins/{id}/configure', [Admin\PluginController::class, 'configure']);
-        $r->post('/settings/plugins/{id}/configure', [Admin\PluginController::class, 'saveConfig']);
-        $r->post('/settings/plugins/{id}/{action}', [Admin\PluginController::class, 'action']);
         $r->get('/settings/system', [Admin\SystemController::class, 'index']);
         $r->post('/settings/system/migrate', [Admin\SystemController::class, 'migrate']);
         $r->post('/settings/system/backup', [Admin\SystemController::class, 'backup']);

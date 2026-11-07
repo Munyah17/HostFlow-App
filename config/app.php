@@ -17,10 +17,4 @@ return [
         'password' => (string) Env::get('DB_PASSWORD', ''),
     ],
     'cron_web_token' => (string) Env::get('CRON_WEB_TOKEN', ''),
-    // Directories scanned for plugins: bundled (shipped with the code) and uploaded (persistent storage).
-    'plugin_paths' => [
-        'bundled' => BASE_PATH . '/plugins',
-        'uploaded' => BASE_PATH . '/storage/plugins',
-    ],
-    'plugin_max_upload_mb' => 10,
 ];

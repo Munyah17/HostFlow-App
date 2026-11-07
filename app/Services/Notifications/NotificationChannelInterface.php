@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Notifications;
 
 /**
- * A delivery channel (email in core; SMS/WhatsApp via plugins).
+ * A delivery channel (email in core).
  * HostFlow decides what/when/who; the channel only delivers.
  */
 interface NotificationChannelInterface

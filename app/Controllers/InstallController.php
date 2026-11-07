@@ -32,7 +32,6 @@ final class InstallController extends Controller
             ['OpenSSL extension', extension_loaded('openssl'), '', true],
             ['mbstring extension', extension_loaded('mbstring'), '', true],
             ['DOM / GD (PDF invoices)', extension_loaded('dom') && extension_loaded('gd'), '', false],
-            ['Zip extension (plugin uploads)', class_exists(\ZipArchive::class), '', false],
             ['storage/ is writable', $writable(BASE_PATH . '/storage'), '', true],
             ['Application root writable (to create .env)', is_writable(BASE_PATH) || (is_file(BASE_PATH . '/.env') && is_writable(BASE_PATH . '/.env')), '', true],
         ];

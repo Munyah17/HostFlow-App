@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Hosting;
 
 /**
- * Contract for hosting infrastructure integrations (cPanel/WHM now; Plesk,
- * DirectAdmin etc. later as plugins). Providers only perform hosting operations;
+ * Contract for hosting infrastructure integrations (cPanel/WHM). Providers only perform hosting operations;
  * customers, billing and automation remain in the HostFlow core.
  *
  * Normalised account array:

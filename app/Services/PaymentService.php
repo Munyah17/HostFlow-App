@@ -10,7 +10,7 @@ use App\Services\Payments\GatewayStatus;
 
 /**
  * The single place where payments are applied to invoices.
- * Gateways and plugins report verified results here; they never mark invoices paid directly.
+ * Gateways report verified results here; they never mark invoices paid directly.
  */
 final class PaymentService
 {

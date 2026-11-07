@@ -1,14 +1,13 @@
 <?= view('components.heading', [
     'title' => 'Settings',
     'subtitle' => $sections[$section],
-    'actions' => '<a class="btn ghost" href="' . url('/settings/plugins') . '">Plugins</a><a class="btn ghost" href="' . url('/settings/system') . '">System</a>',
+    'actions' => '<a class="btn ghost" href="' . url('/settings/system') . '">System</a>',
 ], null) ?>
 
 <div class="tabs">
   <?php foreach ($sections as $key => $label): ?>
     <a href="<?= url('/settings/' . $key) ?>" class="<?= $section === $key ? 'active' : '' ?>"><?= e($label) ?></a>
   <?php endforeach; ?>
-  <a href="<?= url('/settings/plugins') ?>" class="">Plugins</a>
   <a href="<?= url('/settings/system') ?>" class="">System</a>
 </div>
 

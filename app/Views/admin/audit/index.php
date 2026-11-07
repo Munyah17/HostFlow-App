@@ -8,7 +8,7 @@
     <input type="search" name="q" value="<?= e($q) ?>" placeholder="Search action, user or details…">
     <select name="entity" data-autosubmit>
       <option value="">All entities</option>
-      <?php foreach (['customer', 'service', 'invoice', 'ticket', 'plan', 'provider', 'user', 'plugin', 'system', 'cron_run'] as $en): ?>
+      <?php foreach (['customer', 'service', 'invoice', 'ticket', 'plan', 'provider', 'user', 'system', 'cron_run'] as $en): ?>
         <option value="<?= $en ?>" <?= $entity === $en ? 'selected' : '' ?>><?= e(ucfirst($en)) ?></option>
       <?php endforeach; ?>
     </select>

@@ -8,7 +8,7 @@ use App\Services\Notifications\NotificationService;
 
 /**
  * Domain registrations and renewals. Registrations are fulfilled manually at the
- * registrar (or by a registrar plugin): payment moves a domain to
+ * registrar: payment moves a domain to
  * pending_registration, staff confirms it and the expiry clock starts there.
  */
 final class DomainService

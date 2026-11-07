@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Payments;
 
 /**
- * Online payment gateway contract (Paynow in core; others via plugins).
+ * Online payment gateway contract (Paynow and Stripe in core).
  * Gateways initiate and verify transactions; PaymentService applies results.
  */
 interface PaymentGatewayInterface
