@@ -68,7 +68,7 @@ final class BillingService
      * Idempotent: the service row is locked and existing (non-cancelled) renewal items are checked.
      * Returns the invoice id (new or existing) or null when not applicable.
      */
-    public static function generateRenewal(int $serviceId, bool $force = false): ?int
+    public static function generateRenewal(int $serviceId, bool $force = false, ?bool &$createdOut = null): ?int
     {
         $created = false;
         $invoiceId = db()->transaction(function ($db) use ($serviceId, $force, &$created) {
@@ -100,6 +100,7 @@ final class BillingService
                 'period_end' => $end,
             ]], ['due_date' => max($start, today()), 'created_by' => null]);
         });
+        $createdOut = $created;
         if ($invoiceId && $created) {
             InvoiceService::notifyCreated($invoiceId);
         }
@@ -244,33 +245,25 @@ final class BillingService
         return $followUps;
     }
 
-    /** Run external follow-up actions after the payment transaction has committed. */
+    /**
+     * Queue external follow-up actions for the automation runner instead of
+     * executing them inside the payment request. WHM calls can take tens of
+     * seconds and would hang the customer's payment return page and gateway
+     * webhooks. The cron tasks pick the work up from database state:
+     *   provision     → retry_provisioning      (service status 'provisioning')
+     *   unsuspend     → reactivate_paid         (billing suspension, no overdue invoices)
+     *   change_plan   → apply_pending_changes   (paid upgrade item, applied_at NULL)
+     */
     public static function runFollowUps(array $followUps): void
     {
-        foreach ($followUps as $f) {
-            try {
-                switch ($f['action']) {
-                    case 'provision':
-                        if (Settings::bool('auto_provision_enabled')) {
-                            ProvisioningService::provision($f['service_id']);
-                        }
-                        break;
-                    case 'unsuspend':
-                        if (Settings::bool('auto_unsuspend_enabled') && !self::hasBlockingOverdue($f['service_id'])) {
-                            ProvisioningService::unsuspend($f['service_id'], 'Payment verified', automated: true);
-                        }
-                        break;
-                    case 'change_plan':
-                        $r = ProvisioningService::changePlan($f['service_id'], $f['plan_id'], $f['price']);
-                        if ($r['success']) {
-                            db()->update('invoice_items', ['applied_at' => now()], 'id = :id', ['id' => $f['item_id']]);
-                        }
-                        break;
-                }
-            } catch (\Throwable $e) {
-                AutomationLog::record('billing', $f['action'], 'failed', $e->getMessage(), 'service', $f['service_id']);
-            }
+        if (!$followUps) {
+            return;
         }
+        $summary = implode(', ', array_map(
+            fn ($f) => $f['action'] . ' service #' . $f['service_id'],
+            $followUps
+        ));
+        AutomationLog::record('billing', 'followups_queued', 'info', "Queued for automation: {$summary}", 'service', (int) $followUps[0]['service_id']);
     }
 
     /** True when the service still has another unpaid renewal invoice past the grace period. */

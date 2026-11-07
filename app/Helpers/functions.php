@@ -31,7 +31,8 @@ function config(string $key, mixed $default = null): mixed
 
 function app_version(): string
 {
-    return trim((string) @file_get_contents(BASE_PATH . '/VERSION')) ?: '0.0.0';
+    static $version = null;
+    return $version ??= trim((string) @file_get_contents(BASE_PATH . '/VERSION')) ?: '0.0.0';
 }
 
 function setting(string $key, mixed $default = null): mixed

@@ -7,7 +7,7 @@
 <div class="stats three">
   <div class="stat"><a href="<?= url('/customers') ?>"><span>Total customers</span><strong><?= (int) $stats['total'] ?></strong><small>+<?= (int) $stats['new30'] ?> in the last 30 days</small></a></div>
   <div class="stat"><a href="<?= url('/customers', ['balance' => 'outstanding']) ?>"><span>Outstanding balances</span><strong><?= money($stats['outstanding']) ?></strong><small>Unpaid invoices</small></a></div>
-  <div class="stat"><a href="<?= url('/customers', ['balance' => 'overdue']) ?>"><span>Overdue accounts</span><strong><?= (int) db()->fetchColumn("SELECT COUNT(DISTINCT customer_id) FROM invoices WHERE status = 'overdue'") ?></strong><small>With overdue invoices</small></a></div>
+  <div class="stat"><a href="<?= url('/customers', ['balance' => 'overdue']) ?>"><span>Overdue accounts</span><strong><?= (int) $stats['overdue_customers'] ?></strong><small>With overdue invoices</small></a></div>
 </div>
 
 <div class="card">

@@ -51,6 +51,7 @@ final class CustomerController extends Controller
         $stats = db()->fetch(
             "SELECT COUNT(*) AS total, SUM(status = 'active') AS active,
               (SELECT COALESCE(SUM(total - amount_paid),0) FROM invoices WHERE status IN ('pending','overdue')) AS outstanding,
+              (SELECT COUNT(DISTINCT customer_id) FROM invoices WHERE status = 'overdue') AS overdue_customers,
               (SELECT COUNT(*) FROM customers WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) AS new30
              FROM customers"
         );
@@ -103,7 +104,7 @@ final class CustomerController extends Controller
             'invoices' => db()->fetchAll('SELECT * FROM invoices WHERE customer_id = ? ORDER BY id DESC LIMIT 100', [$id]),
             'payments' => db()->fetchAll('SELECT p.*, i.number FROM payments p JOIN invoices i ON i.id = p.invoice_id WHERE p.customer_id = ? ORDER BY p.created_at DESC LIMIT 100', [$id]),
             'tickets' => db()->fetchAll('SELECT * FROM support_tickets WHERE customer_id = ? ORDER BY updated_at DESC LIMIT 50', [$id]),
-            'notes' => db()->fetchAll('SELECT n.*, u.name AS author FROM customer_notes n LEFT JOIN users u ON u.id = n.user_id WHERE n.customer_id = ? ORDER BY n.created_at DESC', [$id]),
+            'notes' => db()->fetchAll('SELECT n.*, u.name AS author FROM customer_notes n LEFT JOIN users u ON u.id = n.user_id WHERE n.customer_id = ? ORDER BY n.created_at DESC LIMIT 100', [$id]),
             'activity' => db()->fetchAll(
                 "SELECT a.*, u.name AS user_name FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id
                  WHERE (a.entity_type = 'customer' AND a.entity_id = ?)

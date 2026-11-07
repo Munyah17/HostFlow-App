@@ -24,7 +24,14 @@ if (PHP_SAPI !== 'cli') {
 
 @set_time_limit(0);
 
-$result = App\Services\AutomationService::run();
+$only = null;
+foreach (array_slice($argv ?? [], 1) as $arg) {
+    if (str_starts_with($arg, '--tasks=')) {
+        $only = array_values(array_filter(array_map('trim', explode(',', substr($arg, 8)))));
+    }
+}
+
+$result = App\Services\AutomationService::run($only ?: null);
 if ($result === null) {
     echo "Another automation run is already in progress.\n";
     exit(0);

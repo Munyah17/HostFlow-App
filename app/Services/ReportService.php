@@ -9,15 +9,29 @@ final class ReportService
 {
     public static function mrr(?string $type = null): float
     {
-        $sql = "SELECT price, billing_cycle FROM services WHERE status = 'active'" . ($type ? ' AND type = ?' : '');
-        $total = 0.0;
-        foreach (db()->fetchAll($sql, $type ? [$type] : []) as $s) {
-            $total += BillingCycle::monthlyEquivalent((float) $s['price'], $s['billing_cycle']);
-        }
-        return round($total, 2);
+        // Monthly equivalent = price / months in cycle (mirrors BillingCycle::monthlyEquivalent).
+        $sql = "SELECT COALESCE(SUM(price / CASE billing_cycle
+                    WHEN 'quarterly' THEN 3 WHEN 'semiannual' THEN 6 WHEN 'annual' THEN 12 ELSE 1 END), 0)
+                FROM services WHERE status = 'active'" . ($type ? ' AND type = ?' : '');
+        return round((float) db()->fetchColumn($sql, $type ? [$type] : []), 2);
     }
 
+    /** Dashboard counters, cached for 60s — the query scans ~10 tables. */
     public static function counts(): array
+    {
+        $cacheFile = BASE_PATH . '/storage/cache/report-counts.json';
+        if (is_file($cacheFile) && filemtime($cacheFile) > time() - 60) {
+            $cached = json_decode((string) @file_get_contents($cacheFile), true);
+            if (is_array($cached)) {
+                return $cached;
+            }
+        }
+        $row = self::countsQuery();
+        @file_put_contents($cacheFile, json_encode($row));
+        return $row;
+    }
+
+    private static function countsQuery(): array
     {
         $row = db()->fetch(
             "SELECT

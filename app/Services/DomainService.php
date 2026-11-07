@@ -153,7 +153,7 @@ final class DomainService
      * Idempotent through (domain_id, item_type, period_start). Returns the invoice id
      * (new or existing) or null when not applicable.
      */
-    public static function generateRenewal(int $domainId, bool $force = false): ?int
+    public static function generateRenewal(int $domainId, bool $force = false, ?bool &$createdOut = null): ?int
     {
         $created = false;
         $invoiceId = db()->transaction(function ($db) use ($domainId, $force, &$created) {
@@ -191,6 +191,7 @@ final class DomainService
                 'meta' => ['action' => 'renew'],
             ]], ['due_date' => max($start, today()), 'created_by' => null]);
         });
+        $createdOut = $created;
         if ($invoiceId && $created) {
             InvoiceService::notifyCreated($invoiceId);
         }

@@ -71,6 +71,28 @@ final class AutomationService
         return ['run_id' => $runId, 'status' => $status, 'summary' => $self->summary];
     }
 
+    /**
+     * Trigger an automation run in a detached background process so the calling
+     * request (e.g. "Run now" in the admin) returns immediately instead of
+     * blocking on WHM/SMTP calls for minutes. Output goes to cron-manual.log.
+     */
+    public static function runDetached(?array $only = null): bool
+    {
+        $cmd = escapeshellarg(PHP_BINARY) . ' -q ' . escapeshellarg(BASE_PATH . '/cron/run.php');
+        if ($only) {
+            $cmd .= ' --tasks=' . escapeshellarg(implode(',', $only));
+        }
+        $log = BASE_PATH . '/storage/cache/cron-manual.log';
+        @mkdir(dirname($log), 0775, true);
+        $cmd .= ' > ' . escapeshellarg($log) . ' 2>&1';
+        if (PHP_OS_FAMILY === 'Windows') {
+            pclose(popen('start /B "" ' . $cmd, 'r'));
+        } else {
+            exec('nohup ' . $cmd . ' < /dev/null &');
+        }
+        return true;
+    }
+
     private function runTask(string $task): void
     {
         $method = lcfirst(str_replace('_', '', ucwords($task, '_')));
@@ -109,15 +131,15 @@ final class AutomationService
         $services = db()->fetchAll("SELECT id FROM services WHERE status IN ('active','suspended') AND next_due_date IS NOT NULL AND next_due_date <= ?", [$windowEnd]);
         $count = 0;
         foreach ($services as $s) {
-            $before = (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices');
+            $created = false;
             try {
-                $invoiceId = BillingService::generateRenewal((int) $s['id']);
+                $invoiceId = BillingService::generateRenewal((int) $s['id'], false, $created);
             } catch (\Throwable $e) {
                 $this->fail();
                 AutomationLog::record('generate_renewals', 'renewal_invoice', 'failed', $e->getMessage(), 'service', (int) $s['id']);
                 continue;
             }
-            if ($invoiceId && (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices') > $before) {
+            if ($created && $invoiceId) {
                 $count++;
                 AutomationLog::record('generate_renewals', 'renewal_invoice', 'success', 'Invoice ' . db()->fetchColumn('SELECT number FROM invoices WHERE id = ?', [$invoiceId]) . ' generated', 'service', (int) $s['id']);
             }
@@ -279,15 +301,15 @@ final class AutomationService
         }
         $count = 0;
         foreach (DomainService::renewalsDue() as $d) {
-            $before = (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices');
+            $created = false;
             try {
-                $invoiceId = DomainService::generateRenewal((int) $d['id']);
+                $invoiceId = DomainService::generateRenewal((int) $d['id'], false, $created);
             } catch (\Throwable $e) {
                 $this->fail();
                 AutomationLog::record('domain_renewals', 'renewal_invoice', 'failed', $e->getMessage(), 'domain', (int) $d['id']);
                 continue;
             }
-            if ($invoiceId && (int) db()->fetchColumn('SELECT COUNT(*) FROM invoices') > $before) {
+            if ($created && $invoiceId) {
                 $count++;
                 AutomationLog::record('domain_renewals', 'renewal_invoice', 'success', 'Invoice ' . db()->fetchColumn('SELECT number FROM invoices WHERE id = ?', [$invoiceId]) . ' generated', 'domain', (int) $d['id']);
             }

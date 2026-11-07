@@ -58,18 +58,13 @@ final class AutomationController extends Controller
         ]);
     }
 
-    /** Run automation now (Super Admin). Optionally a subset of tasks. */
+    /** Start an automation run in the background (Super Admin). Optionally a subset of tasks. */
     public function runNow(): never
     {
         $only = array_values(array_intersect((array) ($_POST['tasks'] ?? []), array_keys(AutomationService::TASKS)));
-        $result = AutomationService::run($only ?: null);
-        if ($result === null) {
-            flash('error', 'An automation run is already in progress.');
-        } else {
-            audit('automation.manual_run', 'cron_run', $result['run_id'], $only ? ['tasks' => $only] : null);
-            flash($result['status'] === 'completed' ? 'success' : 'warning', 'Run #' . $result['run_id'] . ' finished: ' . status_label($result['status']) . '.');
-            redirect('/automation/runs/' . $result['run_id']);
-        }
+        AutomationService::runDetached($only ?: null);
+        audit('automation.manual_run', 'cron_run', null, $only ? ['tasks' => $only] : null);
+        flash('success', 'Automation run started in the background — results appear under Runs in a minute or two.');
         redirect('/automation');
     }
 
