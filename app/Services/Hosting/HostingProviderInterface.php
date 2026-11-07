@@ -20,7 +20,7 @@ interface HostingProviderInterface
     /** Reseller/account-level information where the API permits it. */
     public function getResellerInfo(): ProviderResult;
 
-    /** data: list of ['name', 'disk_mb', 'bandwidth_mb', 'email_accounts', 'databases', 'domains'] */
+    /** data: list of ['name', 'disk_mb', 'bandwidth_mb', 'email_accounts', 'databases', 'domains', 'subdomains', 'parked_domains', 'ftp_accounts', 'mailing_lists', 'api_tokens'] (null = unlimited) */
     public function listPackages(): ProviderResult;
 
     /** data: list of normalised accounts */
@@ -42,4 +42,18 @@ interface HostingProviderInterface
 
     /** data: ['url' => single-use login URL]. $service: 'cpanel' | 'webmail'; $app optional cPanel app key. */
     public function createLoginSession(string $username, string $service = 'cpanel', ?string $app = null): ProviderResult;
+
+    /**
+     * Server package (WHM pkg) management. $spec keys (all optional except name on create):
+     *   name, disk_mb, bandwidth_mb, email_accounts, databases, domains (addon),
+     *   parked_domains, subdomains, ftp_accounts, mailing_lists, api_tokens
+     * null = unlimited where the server supports it.
+     */
+    public function createPackage(array $spec): ProviderResult;
+
+    /** Update an existing package; $name identifies it. */
+    public function updatePackage(string $name, array $spec): ProviderResult;
+
+    /** Delete a package. Providers should refuse when accounts still use it. */
+    public function deletePackage(string $name): ProviderResult;
 }

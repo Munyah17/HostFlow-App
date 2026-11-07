@@ -65,7 +65,14 @@ $field = function (string $name, string $label, string $type = 'text', string $e
           </select>
           <?= field_error('provider_id') ?>
         </label>
-        <label class="field"><span>Provider package (e.g. WHM package name)</span><input type="text" name="provider_package" value="<?= $val('provider_package') ?>" maxlength="150"><?= field_error('provider_package') ?></label>
+        <label class="field"><span>Provider package</span>
+          <input type="text" name="provider_package" value="<?= $val('provider_package') ?>" maxlength="150" list="whm-packages" placeholder="e.g. globalsp_Business">
+          <datalist id="whm-packages">
+            <?php foreach ($packageNames ?? [] as $pn): ?><option value="<?= e($pn) ?>"><?php endforeach; ?>
+          </datalist>
+          <span class="help">Pick a WHM package or type a custom name. <a href="<?= url('/hosting/packages') ?>">Manage server packages</a>.</span>
+          <?= field_error('provider_package') ?>
+        </label>
       </div>
       <label class="field"><span>Status *</span>
         <select name="status">

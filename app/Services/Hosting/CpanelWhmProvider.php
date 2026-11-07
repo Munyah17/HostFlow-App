@@ -109,9 +109,99 @@ final class CpanelWhmProvider implements HostingProviderInterface
                 'email_accounts' => self::limit($pkg['MAXPOP'] ?? null),
                 'databases' => self::limit($pkg['MAXSQL'] ?? null),
                 'domains' => self::limit($pkg['MAXADDON'] ?? null),
+                'subdomains' => self::limit($pkg['MAXSUB'] ?? null),
+                'parked_domains' => self::limit($pkg['MAXPARK'] ?? null),
+                'ftp_accounts' => self::limit($pkg['MAXFTP'] ?? null),
+                'mailing_lists' => self::limit($pkg['MAXLST'] ?? null),
+                'api_tokens' => self::limit($pkg['MAXTOKENS'] ?? null),
             ];
         }
         return ProviderResult::ok('OK', $out);
+    }
+
+    public function createPackage(array $spec): ProviderResult
+    {
+        $name = trim((string) ($spec['name'] ?? ''));
+        if ($name === '') {
+            return ProviderResult::fail('Package name is required.');
+        }
+        $res = $this->call('addpkg', $this->packageParams($spec + ['name' => $name], fillDefaults: true), 60);
+        if ($res->success) {
+            // Verify it is really there before reporting success.
+            $check = $this->call('listpkgs');
+            $found = false;
+            foreach ((array) ($check->data['pkg'] ?? []) as $pkg) {
+                if (strcasecmp((string) ($pkg['name'] ?? ''), $name) === 0) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                return ProviderResult::fail('WHM reported success but the package was not found in listpkgs.', null, transient: true);
+            }
+        }
+        return $res;
+    }
+
+    public function updatePackage(string $name, array $spec): ProviderResult
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return ProviderResult::fail('Package name is required.');
+        }
+        // WHM editpkg identifies the package via 'pkgname'; only send fields the caller provided.
+        $allowed = ['disk_mb', 'bandwidth_mb', 'email_accounts', 'databases', 'domains', 'parked_domains', 'subdomains', 'ftp_accounts', 'mailing_lists', 'api_tokens'];
+        $partial = array_intersect_key($spec, array_flip($allowed));
+        return $this->call('editpkg', $this->packageParams($partial, fillDefaults: false) + ['pkgname' => $name], 60);
+    }
+
+    public function deletePackage(string $name): ProviderResult
+    {
+        $name = trim($name);
+        if ($name === '') {
+            return ProviderResult::fail('Package name is required.');
+        }
+        // Refuse to delete a package still assigned to accounts on this server.
+        $accts = $this->listAccounts();
+        if ($accts->success) {
+            $users = [];
+            foreach ($accts->data as $a) {
+                if (strcasecmp((string) ($a['package'] ?? ''), $name) === 0) {
+                    $users[] = (string) $a['username'];
+                }
+            }
+            if ($users) {
+                return ProviderResult::fail("Cannot delete '{$name}' — still used by " . count($users) . ' account(s): ' . implode(', ', array_slice($users, 0, 10)) . (count($users) > 10 ? ', …' : ''));
+            }
+        }
+        return $this->call('killpkg', ['pkgname' => $name], 60);
+    }
+
+    /**
+     * Normalise a HostFlow package spec into WHM addpkg/editpkg params.
+     * This WHM version expects QUOTA/BWLIMIT in bytes (verified on v11.138);
+     * unlimited MAX* fields take the literal 'unlimited'.
+     */
+    private function packageParams(array $spec, bool $fillDefaults = true): array
+    {
+        $mb = fn ($v) => ($v === null || $v === '') ? 'unlimited' : (int) round(((float) $v) * 1048576);
+        $max = fn ($v) => ($v === null || $v === '') ? 'unlimited' : max(0, (int) $v);
+        $map = [
+            'disk_mb' => 'QUOTA', 'bandwidth_mb' => 'BWLIMIT', 'ftp_accounts' => 'MAXFTP',
+            'databases' => 'MAXSQL', 'email_accounts' => 'MAXPOP', 'mailing_lists' => 'MAXLST',
+            'subdomains' => 'MAXSUB', 'parked_domains' => 'MAXPARK', 'domains' => 'MAXADDON',
+            'api_tokens' => 'MAXTOKENS',
+        ];
+        $params = [];
+        if (array_key_exists('name', $spec)) {
+            $params['name'] = (string) $spec['name'];
+        }
+        foreach ($map as $key => $whm) {
+            if (array_key_exists($key, $spec) || $fillDefaults) {
+                $params[$whm] = in_array($whm, ['QUOTA', 'BWLIMIT'], true) ? $mb($spec[$key] ?? null) : $max($spec[$key] ?? null);
+            }
+        }
+        return $params;
     }
 
     public function listAccounts(): ProviderResult

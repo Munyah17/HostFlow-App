@@ -84,6 +84,9 @@ return function (Router $r): void {
         $r->post('/hosting/plans', [Admin\PlanController::class, 'store'], ['super']);
         $r->get('/hosting/plans/edit/{id}', [Admin\PlanController::class, 'edit'], ['super']);
         $r->post('/hosting/plans/update/{id}', [Admin\PlanController::class, 'update'], ['super']);
+        $r->get('/hosting/packages', [Admin\PlanController::class, 'packages'], ['super']);
+        $r->post('/hosting/packages/save', [Admin\PlanController::class, 'packageSave'], ['super']);
+        $r->post('/hosting/packages/delete', [Admin\PlanController::class, 'packageDelete'], ['super']);
 
         $r->get('/billing/invoices', [Admin\InvoiceController::class, 'index']);
         $r->get('/billing/invoices/create', [Admin\InvoiceController::class, 'create']);

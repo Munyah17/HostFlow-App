@@ -20,7 +20,8 @@ $prices = function (array $p): string {
 <?= view('components.heading', [
     'title' => 'Plans & pricing',
     'subtitle' => count($plans) . ' plans',
-    'actions' => Auth::isSuper() ? '<a class="btn primary" href="' . url('/hosting/plans/create') . '">+ Add plan</a>' : '',
+    'actions' => (Auth::isSuper() ? '<a class="btn primary" href="' . url('/hosting/plans/create') . '">+ Add plan</a>' : '')
+        . (Auth::isSuper() ? '<a class="btn ghost" href="' . url('/hosting/packages') . '">Server packages</a>' : ''),
 ], null) ?>
 
 <?php foreach (['web' => 'Web hosting', 'email' => 'Email hosting'] as $type => $label): ?>
