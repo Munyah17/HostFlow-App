@@ -53,6 +53,14 @@ final class CpanelWhmProvider implements HostingProviderInterface
         }
         $privs = $this->call('myprivs');
         $privileges = $privs->success ? (array) ($privs->data['privileges'] ?? []) : [];
+        // WHM may return privileges as a list of maps — flatten to acl => granted.
+        if (isset($privileges[0]) && is_array($privileges[0])) {
+            $flat = [];
+            foreach ($privileges as $p) {
+                $flat += (array) $p;
+            }
+            $privileges = $flat;
+        }
         $required = ['list-accts', 'acct-summary', 'create-acct', 'suspend-acct', 'upgrade-account', 'kill-acct', 'create-user-session'];
         $missing = [];
         if (empty($privileges['all'])) {
