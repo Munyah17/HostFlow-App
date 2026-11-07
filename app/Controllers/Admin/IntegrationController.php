@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
+use App\Core\Crypto;
 use App\Core\Request;
 use App\Services\Hosting\ProviderRegistry;
 use App\Services\ProvisioningService;
@@ -46,7 +47,7 @@ final class IntegrationController extends Controller
             back_with_errors(['type' => 'Unknown provider type.'], '/integrations/providers/create');
         }
         $token = trim((string) Request::input('api_token', ''));
-        $id = db()->insert('hosting_providers', $this->fields($data, $token) + ['created_at' => now(), 'updated_at' => now()]);
+        $id = db()->insert('hosting_providers', $this->fields($data, $token !== '' ? Crypto::encrypt($token) : null) + ['created_at' => now(), 'updated_at' => now()]);
         audit('provider.created', 'provider', $id, ['name' => $data['name'], 'type' => $data['type'], 'hostname' => $data['hostname']]);
         flash('success', 'Server added. Test the connection before mapping plans to it.');
         redirect('/integrations');
@@ -65,7 +66,7 @@ final class IntegrationController extends Controller
             back_with_errors(['type' => 'Unknown provider type.'], '/integrations/providers/edit/' . $id);
         }
         $token = trim((string) Request::input('api_token', ''));
-        db()->update('hosting_providers', $this->fields($data, $token !== '' ? $token : $provider['api_token']) + ['updated_at' => now()], 'id = :id', ['id' => $id]);
+        db()->update('hosting_providers', $this->fields($data, $token !== '' ? Crypto::encrypt($token) : $provider['api_token']) + ['updated_at' => now()], 'id = :id', ['id' => $id]);
         audit('provider.updated', 'provider', $id, ['name' => $data['name'], 'status' => $data['status']]);
         flash('success', 'Server saved.');
         redirect('/integrations');
